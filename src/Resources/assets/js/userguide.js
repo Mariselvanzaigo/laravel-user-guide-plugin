@@ -9,16 +9,18 @@ document.addEventListener('DOMContentLoaded', () => {
     ];
     const filesArray = [];
 
-    function addUrlInput(value = '') {
+    function addUrlInput(value = '') {alert(1);
         const div = document.createElement('div');
+        const div2 = document.createElement('div');
         div.className = 'url-row mb-2 d-flex align-items-center gap-2';
         div.innerHTML = `
             <input type="url" name="urls[]" class="form-control" placeholder="https://example.com" value="${value}">
             <button type="button" class="btn btn-sm btn-outline-danger remove-url">Delete</button>
-            <div class="invalid-feedback d-block"></div>
         `;
+        div2.innerHTML = `<div class="invalid-feedback d-block"></div>`;
         div.querySelector('.remove-url').addEventListener('click', () => div.remove());
         urlFields.appendChild(div);
+        urlFields.after(div2);
     }
 
     addUrlInput();
@@ -45,7 +47,8 @@ document.addEventListener('DOMContentLoaded', () => {
             return false;
         }
         if(input.type === 'url' && input.value.trim() && !/^(https?:\/\/)([\w-]+\.)+[\w-]{2,}([\/\w .-]*)*\/?$/.test(input.value.trim())){
-            errorEl.textContent = 'Enter valid URL (https://example.com)';
+            // errorEl.textContent = 'Enter valid URL';
+            toastr.error("Enter valid URL");
             input.classList.add('is-invalid');
             return false;
         }
@@ -141,8 +144,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     if(key.includes('.')){
                         const input = form.querySelector(`[name="${key.replace(/\.\d+/, '[]')}"]`);
                         if(input){
-                            const errorDiv = input.closest('.url-row')?.querySelector('.invalid-feedback');
-                            errorDiv.textContent = err.errors[key][0];
+                            // const errorDiv = input.closest('.url-row')?.querySelector('.invalid-feedback');
+                            // errorDiv.textContent = err.errors[key][0];
+                            toastr.error(err.errors[key][0]);
                             input.classList.add('is-invalid');
                         }
                     } else {

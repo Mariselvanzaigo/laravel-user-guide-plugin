@@ -55,12 +55,11 @@
     </form>
 </div>
 @endsection
-
 @push('styles')
-<link href="{{ asset('css/toastr.min.css') }}" rel="stylesheet">
+<link href="{{ asset('vendor/moduleuserguide/css/toastr.min.css') }}" rel="stylesheet">
 @endpush
 
 @push('scripts')
-<script src="{{ asset('js/toastr.min.js') }}"></script>
-<script src="{{ asset('js/userguide.js') }}"></script> <!-- move all JS below to a separate file -->
+<script src="{{ asset('vendor/moduleuserguide/js/toastr.min.js') }}"></script>
+<script src="{{ asset('vendor/moduleuserguide/js/userguide.js') }}"></script>
 @endpush
