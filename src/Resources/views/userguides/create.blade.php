@@ -9,7 +9,9 @@
 
         {{-- Module --}}
         <div class="mb-3">
-            <label for="module_id" class="form-label fw-semibold">Select Module <span class="text-danger">*</span></label>
+            <label for="module_id" class="form-label fw-semibold">
+                Select Module <span class="text-danger">*</span>
+            </label>
             <select name="module_id" id="module_id" class="form-select" required>
                 <option value="">-- Select Module --</option>
                 @foreach($modules as $module)
@@ -21,7 +23,9 @@
 
         {{-- Name --}}
         <div class="mb-3">
-            <label for="name" class="form-label fw-semibold">User Guide Name <span class="text-danger">*</span></label>
+            <label for="name" class="form-label fw-semibold">
+                User Guide Name <span class="text-danger">*</span>
+            </label>
             <input type="text" name="name" id="name" class="form-control" maxlength="256" required>
             <div class="invalid-feedback" id="name_error"></div>
         </div>
@@ -35,8 +39,10 @@
 
         {{-- Files --}}
         <div class="mb-3">
-            <label for="files" class="form-label fw-semibold">Upload Files (max 20MB each)</label>
-            <input type="file" name="files[]" id="files" class="form-control" multiple>
+            <label for="files" class="form-label fw-semibold">
+                Upload Files (max 20MB each)
+            </label>
+            <input type="file" id="fileInput" class="form-control" multiple>
             <div id="file-list" class="mt-2"></div>
             <div class="invalid-feedback d-block" id="files_error"></div>
         </div>
@@ -58,20 +64,20 @@
     </form>
 </div>
 
-@push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    const form = document.getElementById('{{ $formId }}');
-    const fileInput = form.querySelector('#files');
-    const fileList = form.querySelector('#file-list');
+    const form = document.getElementById('userGuideCreateForm');
+    const fileInput = document.getElementById('fileInput');
+    const fileList = document.getElementById('file-list');
     const allowedTypes = [
         'image/jpeg','image/png','image/jpg','application/pdf',
         'application/msword','application/vnd.openxmlformats-officedocument.wordprocessingml.document','video/mp4'
     ];
+    const filesArray = []; // persistent file storage
 
-    // --- Validate a field ---
+    // ✅ Validate field
     const validateField = (input) => {
-        const errorEl = document.getElementById(`${input.id}_error`);
+        const errorEl = document.getElementById(`${input.id}_error`) || document.getElementById('urls_error');
         if (!errorEl) return true;
         errorEl.textContent = '';
         input.classList.remove('is-invalid');
@@ -92,88 +98,109 @@ document.addEventListener('DOMContentLoaded', () => {
             return false;
         }
         if (input.name === 'urls[]' && input.value.trim() && !/^https?:\/\/[^\s]+$/.test(input.value.trim())) {
-            document.getElementById('urls_error').textContent = 'Enter valid URLs (https://...)';
+            errorEl.textContent = 'Enter a valid URL (https://...)';
             input.classList.add('is-invalid');
             return false;
         }
         return true;
     };
 
-    // --- Field-level validation ---
+    // ✅ On-change validations
     form.querySelectorAll('input, select, textarea').forEach(input => {
         input.addEventListener('input', () => validateField(input));
         input.addEventListener('change', () => validateField(input));
     });
 
-    // --- File validation & preview ---
-    fileInput?.addEventListener('change', () => {
-        fileList.innerHTML = '';
+    // ✅ Handle file uploads and append new ones
+    fileInput.addEventListener('change', (e) => {
         document.getElementById('files_error').textContent = '';
-        Array.from(fileInput.files).forEach(file => {
+        const newFiles = Array.from(e.target.files);
+
+        newFiles.forEach(file => {
             if (!allowedTypes.includes(file.type)) {
                 document.getElementById('files_error').textContent = 'Invalid file type detected.';
-                fileInput.classList.add('is-invalid');
-            } else if (file.size > 20 * 1024 * 1024) {
-                document.getElementById('files_error').textContent = 'File exceeds 20MB size limit.';
-                fileInput.classList.add('is-invalid');
-            } else {
-                const div = document.createElement('div');
-                div.className = 'd-flex align-items-center justify-content-between border rounded p-2 mb-1';
-                div.innerHTML = `
-                    <span>${file.name}</span>
-                    <button type="button" class="btn btn-sm btn-outline-danger remove-file">Delete</button>`;
-                div.querySelector('.remove-file').addEventListener('click', () => {
-                    div.remove();
-                    const dataTransfer = new DataTransfer();
-                    Array.from(fileInput.files).forEach(f => { if (f.name !== file.name) dataTransfer.items.add(f); });
-                    fileInput.files = dataTransfer.files;
-                });
-                fileList.appendChild(div);
+                return;
+            }
+            if (file.size > 20 * 1024 * 1024) {
+                document.getElementById('files_error').textContent = 'File exceeds 20MB limit.';
+                return;
+            }
+
+            if (!filesArray.some(f => f.name === file.name)) {
+                filesArray.push(file);
             }
         });
+
+        renderFileList();
+        fileInput.value = ''; // reset input to allow re-selecting
     });
 
-    // --- Add URL ---
-    form.querySelector('#add-url').addEventListener('click', () => {
+    // ✅ Render file list preview
+    function renderFileList() {
+        fileList.innerHTML = '';
+        filesArray.forEach((file, index) => {
+            const div = document.createElement('div');
+            div.className = 'd-flex align-items-center justify-content-between border rounded p-2 mb-1';
+            div.innerHTML = `
+                <span>${file.name}</span>
+                <button type="button" class="btn btn-sm btn-outline-danger">Delete</button>`;
+            div.querySelector('button').addEventListener('click', () => {
+                filesArray.splice(index, 1);
+                renderFileList();
+            });
+            fileList.appendChild(div);
+        });
+    }
+
+    // ✅ Add more URL inputs
+    document.getElementById('add-url').addEventListener('click', () => {
         const input = document.createElement('input');
         input.type = 'url';
         input.name = 'urls[]';
         input.className = 'form-control mb-2';
         input.placeholder = 'https://example.com';
         input.addEventListener('input', () => validateField(input));
-        form.querySelector('#url-fields').appendChild(input);
+        document.getElementById('url-fields').appendChild(input);
     });
 
-    // --- Remove existing files (for edit form) ---
-    form.querySelectorAll('.remove-existing-file')?.forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            const li = e.target.closest('li');
-            li.remove();
-            const input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = 'delete_files[]';
-            input.value = li.dataset.file;
-            form.appendChild(input);
-        });
-    });
-
-    // --- Submit validation ---
+    // ✅ Handle form submit
     form.addEventListener('submit', (e) => {
         let valid = true;
         form.querySelectorAll('input, select, textarea').forEach(input => {
             if (!validateField(input)) valid = false;
         });
-        if (fileInput && fileInput.files.length > 0) {
-            Array.from(fileInput.files).forEach(file => {
+
+        if (filesArray.length > 0) {
+            for (const file of filesArray) {
                 if (!allowedTypes.includes(file.type) || file.size > 20 * 1024 * 1024) valid = false;
-            });
+            }
         }
+
         if (!valid) {
             e.preventDefault();
             window.scrollTo({ top: 0, behavior: 'smooth' });
+            return;
         }
+
+        // ✅ Manually append files to FormData before submit
+        const formData = new FormData(form);
+        filesArray.forEach(f => formData.append('files[]', f));
+
+        e.preventDefault();
+        fetch(form.action, {
+            method: form.method,
+            body: formData,
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('input[name=_token]').value
+            }
+        })
+        .then(res => res.ok ? res.json() : res.text())
+        .then(data => {
+            alert('User Guide created successfully!');
+            window.location.href = "{{ route('user-guides.index') }}";
+        })
+        .catch(() => alert('Something went wrong. Please try again.'));
     });
 });
 </script>
-@endpush
 @endsection

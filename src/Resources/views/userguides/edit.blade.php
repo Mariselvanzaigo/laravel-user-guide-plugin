@@ -51,7 +51,6 @@
             </ul>
             <input type="file" name="files[]" id="files" class="form-control" multiple>
             <span class="text-danger" id="files_error"></span>
-            <div id="file-list"></div>
         </div>
 
         {{-- File URLs --}}
