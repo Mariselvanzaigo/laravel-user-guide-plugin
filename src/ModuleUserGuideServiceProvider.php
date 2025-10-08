@@ -5,12 +5,16 @@ use Illuminate\Support\Facades\Gate;
 use ModuleUserGuide\Models\Module;
 use ModuleUserGuide\Policies\ModulePolicy;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Route;
 
 class ModuleUserGuideServiceProvider extends ServiceProvider
 {
     public function boot()
     {
-        $this->loadRoutesFrom(__DIR__.'/routes/web.php');
+
+        // $this->loadRoutesFrom(__DIR__.'/routes/web.php');
+        Route::middleware('web')->group(__DIR__.'/routes/web.php');
+
         $this->loadViewsFrom(__DIR__.'/resources/views', 'moduleuserguide');
         $this->loadMigrationsFrom(__DIR__.'/database/migrations');
 
