@@ -73,9 +73,9 @@ document.addEventListener('DOMContentLoaded', () => {
         'image/jpeg','image/png','image/jpg','application/pdf',
         'application/msword','application/vnd.openxmlformats-officedocument.wordprocessingml.document','video/mp4'
     ];
-    const filesArray = []; // persistent file storage
+    const filesArray = [];
 
-    // ✅ Validate field
+    // --- Field validation ---
     const validateField = (input) => {
         const errorEl = document.getElementById(`${input.id}_error`) || document.getElementById('urls_error');
         if (!errorEl) return true;
@@ -105,16 +105,15 @@ document.addEventListener('DOMContentLoaded', () => {
         return true;
     };
 
-    // ✅ On-change validations
     form.querySelectorAll('input, select, textarea').forEach(input => {
         input.addEventListener('input', () => validateField(input));
         input.addEventListener('change', () => validateField(input));
     });
 
-    // ✅ Handle file uploads and append new ones
+    // --- File upload and preview ---
     fileInput.addEventListener('change', (e) => {
-        document.getElementById('files_error').textContent = '';
         const newFiles = Array.from(e.target.files);
+        document.getElementById('files_error').textContent = '';
 
         newFiles.forEach(file => {
             if (!allowedTypes.includes(file.type)) {
@@ -125,24 +124,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.getElementById('files_error').textContent = 'File exceeds 20MB limit.';
                 return;
             }
-
             if (!filesArray.some(f => f.name === file.name)) {
                 filesArray.push(file);
             }
         });
 
         renderFileList();
-        fileInput.value = ''; // reset input to allow re-selecting
+        fileInput.value = '';
     });
 
-    // ✅ Render file list preview
     function renderFileList() {
         fileList.innerHTML = '';
         filesArray.forEach((file, index) => {
             const div = document.createElement('div');
             div.className = 'd-flex align-items-center justify-content-between border rounded p-2 mb-1';
-            div.innerHTML = `
-                <span>${file.name}</span>
+            div.innerHTML = `<span>${file.name}</span>
                 <button type="button" class="btn btn-sm btn-outline-danger">Delete</button>`;
             div.querySelector('button').addEventListener('click', () => {
                 filesArray.splice(index, 1);
@@ -152,7 +148,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // ✅ Add more URL inputs
+    // --- Add URL inputs ---
     document.getElementById('add-url').addEventListener('click', () => {
         const input = document.createElement('input');
         input.type = 'url';
@@ -163,9 +159,11 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('url-fields').appendChild(input);
     });
 
-    // ✅ Handle form submit
+    // --- Submit ---
     form.addEventListener('submit', (e) => {
+        e.preventDefault();
         let valid = true;
+
         form.querySelectorAll('input, select, textarea').forEach(input => {
             if (!validateField(input)) valid = false;
         });
@@ -177,27 +175,34 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (!valid) {
-            e.preventDefault();
             window.scrollTo({ top: 0, behavior: 'smooth' });
             return;
         }
 
-        // ✅ Manually append files to FormData before submit
         const formData = new FormData(form);
         filesArray.forEach(f => formData.append('files[]', f));
 
-        e.preventDefault();
         fetch(form.action, {
             method: form.method,
             body: formData,
-            headers: {
-                'X-CSRF-TOKEN': document.querySelector('input[name=_token]').value
-            }
+            headers: {'X-CSRF-TOKEN': document.querySelector('input[name=_token]').value}
         })
-        .then(res => res.ok ? res.json() : res.text())
+        .then(res => res.json())
         .then(data => {
-            alert('User Guide created successfully!');
-            window.location.href = "{{ route('user-guides.index') }}";
+            if (data.errors) {
+                // Show backend errors inline
+                Object.keys(data.errors).forEach(key => {
+                    const el = document.getElementById(`${key}_error`);
+                    if (el) {
+                        el.textContent = data.errors[key][0];
+                        const input = document.querySelector(`[name="${key}"]`);
+                        input?.classList.add('is-invalid');
+                    }
+                });
+            } else {
+                alert('User Guide created successfully!');
+                window.location.href = "{{ route('user-guides.index') }}";
+            }
         })
         .catch(() => alert('Something went wrong. Please try again.'));
     });
