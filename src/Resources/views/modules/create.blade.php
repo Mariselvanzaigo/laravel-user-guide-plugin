@@ -3,7 +3,7 @@
 @section('content')
 <div class="container">
     <h2>Create Module</h2>
-    @can('create', \ModuleUserGuide\Models\Module::class)
+    {{-- @can('create', \ModuleUserGuide\Models\Module::class) --}}
     <form action="{{ route('modules.store') }}" method="POST">
         @csrf
         <div class="form-group mb-3">
@@ -14,8 +14,8 @@
         <button class="btn btn-success">Create</button>
         <a href="{{ route('modules.index') }}" class="btn btn-secondary">Back</a>
     </form>
-    @else
+    {{-- @else
         <div class="alert alert-danger">You do not have permission to create modules.</div>
-    @endcan
+    @endcan --}}
 </div>
 @endsection

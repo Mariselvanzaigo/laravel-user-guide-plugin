@@ -3,9 +3,9 @@
 @section('content')
 <div class="container">
     <h2>Modules</h2>
-    @can('create', \ModuleUserGuide\Models\Module::class)
+    {{-- @can('create', \ModuleUserGuide\Models\Module::class) --}}
         <a href="{{ route('modules.create') }}" class="btn btn-primary mb-3">Add Module</a>
-    @endcan
+    {{-- @endcan --}}
 
     <table class="table table-bordered">
         <thead>

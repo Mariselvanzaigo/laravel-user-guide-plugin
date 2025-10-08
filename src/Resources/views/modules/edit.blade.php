@@ -3,7 +3,7 @@
 @section('content')
 <div class="container">
     <h2>Edit Module</h2>
-    @can('update', $module)
+    {{-- @can('update', $module) --}}
     <form action="{{ route('modules.update', $module) }}" method="POST">
         @csrf
         @method('PUT')
@@ -15,8 +15,8 @@
         <button class="btn btn-success">Update</button>
         <a href="{{ route('modules.index') }}" class="btn btn-secondary">Back</a>
     </form>
-    @else
+    {{-- @else
         <div class="alert alert-danger">You do not have permission to edit this module.</div>
-    @endcan
+    @endcan --}}
 </div>
 @endsection

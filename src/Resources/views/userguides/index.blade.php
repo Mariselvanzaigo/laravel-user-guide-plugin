@@ -4,9 +4,9 @@
 <div class="container">
     <h2>User Guides</h2>
 
-    @can('create', \ModuleUserGuide\Models\UserGuide::class)
+    {{-- @can('create', \ModuleUserGuide\Models\UserGuide::class) --}}
         <a href="{{ route('user-guides.create') }}" class="btn btn-primary mb-3">Add User Guide</a>
-    @endcan
+    {{-- @endcan --}}
 
     <table class="table table-bordered">
         <thead>

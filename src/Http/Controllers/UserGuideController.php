@@ -12,7 +12,7 @@ class UserGuideController extends Controller
     protected $layout = 'layouts.app';
 
     public function index() {
-        $this->authorize('viewAny', UserGuide::class);
+        // $this->authorize('viewAny', UserGuide::class);
         $userGuides = UserGuide::with('module')->paginate(10);
         return view('moduleuserguide::userguides.index', [
             'userGuides' => $userGuides,
@@ -21,7 +21,7 @@ class UserGuideController extends Controller
     }
 
     public function create() {
-        $this->authorize('create', UserGuide::class);
+        // $this->authorize('create', UserGuide::class);
         $modules = Module::all();
         return view('moduleuserguide::userguides.create', [
             'modules' => $modules,
@@ -30,7 +30,7 @@ class UserGuideController extends Controller
     }
 
     public function store(UserGuideRequest $request) {
-        $this->authorize('create', UserGuide::class);
+        // $this->authorize('create', UserGuide::class);
         $data = $request->validated();
 
         // handle file uploads
@@ -48,7 +48,7 @@ class UserGuideController extends Controller
     }
 
     public function edit(UserGuide $userGuide) {
-        $this->authorize('update', $userGuide);
+        // $this->authorize('update', $userGuide);
         $modules = Module::all();
         return view('moduleuserguide::userguides.edit', [
             'userGuide' => $userGuide,
@@ -58,7 +58,7 @@ class UserGuideController extends Controller
     }
 
     public function update(UserGuideRequest $request, UserGuide $userGuide) {
-        $this->authorize('update', $userGuide);
+        // $this->authorize('update', $userGuide);
         $data = $request->validated();
 
         $files = $userGuide->files ?? [];
@@ -75,7 +75,7 @@ class UserGuideController extends Controller
     }
 
     public function destroy(UserGuide $userGuide) {
-        $this->authorize('delete', $userGuide);
+        // $this->authorize('delete', $userGuide);
 
         if($userGuide->files){
             foreach($userGuide->files as $file){
