@@ -5,17 +5,25 @@ use ModuleUserGuide\Models\UserGuide;
 use ModuleUserGuide\Models\Module;
 use ModuleUserGuide\Http\Requests\UserGuideRequest;
 use Illuminate\Support\Facades\Storage;
+use App\Http\Controllers\Controller; 
 
 class UserGuideController extends Controller
 {
+    protected $layout = 'layouts.app';
     public function index() {
         $userGuides = UserGuide::with('module')->paginate(10);
-        return view('moduleuserguide::userguides.index', compact('userGuides'));
+        return view('moduleuserguide::userguides.index', [
+            'userGuides' => $userGuides,
+            'layout' => $this->layout
+        ]);
     }
 
     public function create() {
         $modules = Module::all();
-        return view('moduleuserguide::userguides.create', compact('modules'));
+        return view('moduleuserguide::userguides.create', [
+            'modules' => $modules,
+            'layout' => $this->layout
+        ]);
     }
 
     public function store(UserGuideRequest $request) {
@@ -37,7 +45,11 @@ class UserGuideController extends Controller
 
     public function edit(UserGuide $userGuide) {
         $modules = Module::all();
-        return view('moduleuserguide::userguides.edit', compact('userGuide','modules'));
+        return view('moduleuserguide::userguides.edit', [
+            'userGuide' => $userGuide,
+            'modules' => $modules,
+            'layout' => $this->layout
+        ]);
     }
 
     public function update(UserGuideRequest $request, UserGuide $userGuide) {
@@ -66,4 +78,5 @@ class UserGuideController extends Controller
         $userGuide->delete();
         return redirect()->route('user-guides.index')->with('success','User Guide deleted successfully!');
     }
+
 }

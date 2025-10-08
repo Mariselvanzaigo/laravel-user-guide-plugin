@@ -4,16 +4,23 @@ namespace ModuleUserGuide\Http\Controllers;
 use ModuleUserGuide\Models\Module;
 use ModuleUserGuide\Http\Requests\ModuleRequest;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller; 
 
 class ModuleController extends Controller
 {
+    protected $layout = 'layouts.app';
     public function index() {
         $modules = Module::paginate(10);
-        return view('moduleuserguide::modules.index', compact('modules'));
+        return view('moduleuserguide::modules.index', [
+            'modules' => $modules,
+            'layout' => $this->layout
+        ]);
     }
 
     public function create() {
-        return view('moduleuserguide::modules.create');
+        return view('moduleuserguide::modules.create', [
+            'layout' => $this->layout
+        ]);
     }
 
     public function store(ModuleRequest $request) {
@@ -22,7 +29,10 @@ class ModuleController extends Controller
     }
 
     public function edit(Module $module) {
-        return view('moduleuserguide::modules.edit', compact('module'));
+        return view('moduleuserguide::modules.edit', [
+            'module' => $module,
+            'layout' => $this->layout
+        ]);
     }
 
     public function update(ModuleRequest $request, Module $module) {
@@ -34,4 +44,5 @@ class ModuleController extends Controller
         $module->delete();
         return redirect()->route('modules.index')->with('success','Module deleted successfully!');
     }
+
 }
