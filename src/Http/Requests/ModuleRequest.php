@@ -7,7 +7,12 @@ class ModuleRequest extends FormRequest
 {
     public function authorize() { return true; }
 
-    public function rules() {
-        return ['name' => 'required|string|max:256'];
+    public function rules()
+    {
+        $moduleId = $this->route('module')?->id ?? null;
+
+        return [
+            'name' => 'required|string|max:256|unique:modules,name,' . $moduleId,
+        ];
     }
 }
