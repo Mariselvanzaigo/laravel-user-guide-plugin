@@ -3,7 +3,9 @@
 @section('content')
 <div class="container">
     <h2>Modules</h2>
-    <a href="{{ route('modules.create') }}" class="btn btn-primary mb-3">Add Module</a>
+    @can('create', \ModuleUserGuide\Models\Module::class)
+        <a href="{{ route('modules.create') }}" class="btn btn-primary mb-3">Add Module</a>
+    @endcan
 
     <table class="table table-bordered">
         <thead>
@@ -19,12 +21,16 @@
                 <td>{{ $loop->iteration }}</td>
                 <td>{{ $module->name }}</td>
                 <td>
-                    <a href="{{ route('modules.edit', $module) }}" class="btn btn-warning btn-sm">Edit</a>
-                    <form method="POST" action="{{ route('modules.destroy', $module) }}" style="display:inline">
-                        @csrf
-                        @method('DELETE')
-                        <button class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this module?')">Delete</button>
-                    </form>
+                    @can('update', $module)
+                        <a href="{{ route('modules.edit', $module) }}" class="btn btn-warning btn-sm">Edit</a>
+                    @endcan
+                    @can('delete', $module)
+                        <form method="POST" action="{{ route('modules.destroy', $module) }}" style="display:inline">
+                            @csrf
+                            @method('DELETE')
+                            <button class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this module?')">Delete</button>
+                        </form>
+                    @endcan
                 </td>
             </tr>
         @endforeach

@@ -1,6 +1,9 @@
 <?php
 namespace ModuleUserGuide;
 
+use Illuminate\Support\Facades\Gate;
+use ModuleUserGuide\Models\Module;
+use ModuleUserGuide\Policies\ModulePolicy;
 use Illuminate\Support\ServiceProvider;
 
 class ModuleUserGuideServiceProvider extends ServiceProvider
@@ -14,6 +17,7 @@ class ModuleUserGuideServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__.'/resources/views' => resource_path('views/vendor/moduleuserguide'),
         ], 'views');
+        Gate::policy(Module::class, ModulePolicy::class);
     }
 
     public function register() {}

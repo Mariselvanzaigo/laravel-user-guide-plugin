@@ -3,6 +3,8 @@
 @section('content')
 <div class="container">
     <h2>Edit User Guide</h2>
+
+    @can('update', $userGuide)
     <form action="{{ route('user-guides.update', $userGuide) }}" method="POST" enctype="multipart/form-data">
         @csrf
         @method('PUT')
@@ -37,6 +39,9 @@
                     @foreach($userGuide->files as $file)
                         <li>
                             <a href="{{ Storage::url($file) }}" target="_blank">{{ basename($file) }}</a>
+                            @can('delete', $userGuide)
+                                <!-- Optionally add delete button for each file -->
+                            @endcan
                         </li>
                     @endforeach
                 </ul>
@@ -47,17 +52,37 @@
 
         <div class="form-group mb-3">
             <label for="urls">File URLs</label>
-            @if($userGuide->urls)
-                @foreach($userGuide->urls as $url)
-                    <input type="url" name="urls[]" class="form-control mb-1" value="{{ $url }}">
-                @endforeach
-            @endif
-            <input type="url" name="urls[]" class="form-control mb-1" placeholder="https://example.com">
+            <div id="url-fields">
+                @if($userGuide->urls)
+                    @foreach($userGuide->urls as $url)
+                        <input type="url" name="urls[]" class="form-control mb-2" value="{{ $url }}">
+                    @endforeach
+                @endif
+                <input type="url" name="urls[]" class="form-control mb-2" placeholder="https://example.com">
+            </div>
+            <button type="button" class="btn btn-sm btn-secondary" id="add-url">Add Another URL</button>
             @error('urls.*') <span class="text-danger">{{ $message }}</span> @enderror
         </div>
 
         <button class="btn btn-success">Update</button>
         <a href="{{ route('user-guides.index') }}" class="btn btn-secondary">Back</a>
     </form>
+    @else
+        <div class="alert alert-danger">You do not have permission to edit this user guide.</div>
+    @endcan
 </div>
+
+@push('scripts')
+<script>
+    document.getElementById('add-url').addEventListener('click', function() {
+        let container = document.getElementById('url-fields');
+        let input = document.createElement('input');
+        input.type = 'url';
+        input.name = 'urls[]';
+        input.className = 'form-control mb-2';
+        input.placeholder = 'https://example.com';
+        container.appendChild(input);
+    });
+</script>
+@endpush
 @endsection
