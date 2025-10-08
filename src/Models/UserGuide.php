@@ -1,17 +1,18 @@
 ﻿<?php
-
-namespace LaravelUserGuide\Models;
+namespace ModuleUserGuide\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class UserGuide extends Model {
-    protected \ = ['module_id','name','description','files','urls'];
-    protected \ = [
+class UserGuide extends Model
+{
+    protected $fillable = ['module_id','name','description','files','urls'];
+
+    protected $casts = [
         'files' => 'array',
-        'urls' => 'array'
+        'urls' => 'array',
     ];
 
     public function module() {
-        return \->belongsTo(Module::class);
+        return $this->belongsTo(Module::class);
     }
 }

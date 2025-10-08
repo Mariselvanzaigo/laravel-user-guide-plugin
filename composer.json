@@ -15,13 +15,13 @@
     },
     "autoload": {
         "psr-4": {
-            "LaravelUserGuide\\": "src/"
+            "ModuleUserGuide\\": "src/"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "LaravelUserGuide\\LaravelUserGuideServiceProvider"
+                "ModuleUserGuide\\ModuleUserGuideServiceProvider"
             ]
         }
     },

@@ -1,25 +1,37 @@
 ﻿<?php
+namespace ModuleUserGuide\Http\Controllers;
 
-namespace LaravelUserGuide\Http\Controllers;
-
-use App\Http\Controllers\Controller;
+use ModuleUserGuide\Models\Module;
+use ModuleUserGuide\Http\Requests\ModuleRequest;
 use Illuminate\Http\Request;
-use LaravelUserGuide\Models\Module;
 
 class ModuleController extends Controller
 {
     public function index() {
-        \ = Module::paginate(10);
-        return view('userguide::modules.index', compact('modules'));
+        $modules = Module::paginate(10);
+        return view('moduleuserguide::modules.index', compact('modules'));
     }
 
     public function create() {
-        return view('userguide::modules.create');
+        return view('moduleuserguide::modules.create');
     }
 
-    public function store(Request \) {
-        \->validate(['name'=>'required|max:256']);
-        Module::create(['name'=>\->name]);
-        return redirect()->route('modules.index')->with('success','Module created!');
+    public function store(ModuleRequest $request) {
+        Module::create($request->validated());
+        return redirect()->route('modules.index')->with('success','Module created successfully!');
+    }
+
+    public function edit(Module $module) {
+        return view('moduleuserguide::modules.edit', compact('module'));
+    }
+
+    public function update(ModuleRequest $request, Module $module) {
+        $module->update($request->validated());
+        return redirect()->route('modules.index')->with('success','Module updated successfully!');
+    }
+
+    public function destroy(Module $module) {
+        $module->delete();
+        return redirect()->route('modules.index')->with('success','Module deleted successfully!');
     }
 }

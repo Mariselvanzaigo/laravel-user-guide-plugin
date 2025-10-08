@@ -1,30 +1,69 @@
 ﻿<?php
+namespace ModuleUserGuide\Http\Controllers;
 
-namespace LaravelUserGuide\Http\Controllers;
-
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use LaravelUserGuide\Models\UserGuide;
-use LaravelUserGuide\Models\Module;
+use ModuleUserGuide\Models\UserGuide;
+use ModuleUserGuide\Models\Module;
+use ModuleUserGuide\Http\Requests\UserGuideRequest;
+use Illuminate\Support\Facades\Storage;
 
 class UserGuideController extends Controller
 {
     public function index() {
-        \ = UserGuide::with('module')->paginate(10);
-        return view('userguide::userguides.index', compact('guides'));
+        $userGuides = UserGuide::with('module')->paginate(10);
+        return view('moduleuserguide::userguides.index', compact('userGuides'));
     }
 
     public function create() {
-        \ = Module::all();
-        return view('userguide::userguides.create', compact('modules'));
+        $modules = Module::all();
+        return view('moduleuserguide::userguides.create', compact('modules'));
     }
 
-    public function store(Request \) {
-        \->validate([
-            'module_id'=>'required|exists:modules,id',
-            'name'=>'required|max:256'
-        ]);
-        UserGuide::create(\->only('module_id','name','description'));
-        return redirect()->route('guides.index')->with('success','User Guide created!');
+    public function store(UserGuideRequest $request) {
+        $data = $request->validated();
+
+        // handle file uploads
+        $files = [];
+        if ($request->hasFile('files')) {
+            foreach ($request->file('files') as $file) {
+                $files[] = $file->store('user-guides');
+            }
+        }
+        $data['files'] = $files;
+        $data['urls'] = $request->urls ?? [];
+
+        UserGuide::create($data);
+        return redirect()->route('user-guides.index')->with('success','User Guide created successfully!');
+    }
+
+    public function edit(UserGuide $userGuide) {
+        $modules = Module::all();
+        return view('moduleuserguide::userguides.edit', compact('userGuide','modules'));
+    }
+
+    public function update(UserGuideRequest $request, UserGuide $userGuide) {
+        $data = $request->validated();
+
+        $files = $userGuide->files ?? [];
+        if ($request->hasFile('files')) {
+            foreach ($request->file('files') as $file) {
+                $files[] = $file->store('user-guides');
+            }
+        }
+        $data['files'] = $files;
+        $data['urls'] = $request->urls ?? [];
+
+        $userGuide->update($data);
+        return redirect()->route('user-guides.index')->with('success','User Guide updated successfully!');
+    }
+
+    public function destroy(UserGuide $userGuide) {
+        // delete files
+        if($userGuide->files){
+            foreach($userGuide->files as $file){
+                Storage::delete($file);
+            }
+        }
+        $userGuide->delete();
+        return redirect()->route('user-guides.index')->with('success','User Guide deleted successfully!');
     }
 }
