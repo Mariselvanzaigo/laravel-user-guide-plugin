@@ -29,10 +29,9 @@ class UserGuideController extends Controller
         ]);
     }
 
-    public function store(UserGuideRequest $request) {
-        // $this->authorize('create', UserGuide::class);
+    public function store(UserGuideRequest $request)
+    {
         $data = $request->validated();
-
         // handle file uploads
         $files = [];
         if ($request->hasFile('files')) {
@@ -44,8 +43,20 @@ class UserGuideController extends Controller
         $data['urls'] = $request->urls ?? [];
 
         UserGuide::create($data);
-        return redirect()->route('user-guides.index')->with('success','User Guide created successfully!');
+
+        // Return JSON for AJAX request
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'User Guide created successfully!'
+            ]);
+        }
+
+        return redirect()->route('user-guides.index')
+                        ->with('success', 'User Guide created successfully!');
     }
+
+
 
     public function edit(UserGuide $userGuide) {
         // $this->authorize('update', $userGuide);
