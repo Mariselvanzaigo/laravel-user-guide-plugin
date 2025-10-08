@@ -75,106 +75,118 @@
 
 @push('scripts')
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const form = document.getElementById('userGuideForm');
-    const fileInput = document.getElementById('files');
-    const filePreview = document.getElementById('file-preview');
+document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('{{ $formId }}');
+    const fileInput = form.querySelector('#files');
+    const fileList = form.querySelector('#file-list');
+    const allowedTypes = [
+        'image/jpeg','image/png','image/jpg','application/pdf',
+        'application/msword','application/vnd.openxmlformats-officedocument.wordprocessingml.document','video/mp4'
+    ];
 
-    // Add another URL field
-    document.getElementById('add-url').addEventListener('click', function() {
-        const container = document.getElementById('url-fields');
+    // --- Validate a field ---
+    const validateField = (input) => {
+        const errorEl = document.getElementById(`${input.id}_error`);
+        if (!errorEl) return true;
+        errorEl.textContent = '';
+        input.classList.remove('is-invalid');
+
+        if (input.required && !input.value.trim()) {
+            errorEl.textContent = 'This field is required.';
+            input.classList.add('is-invalid');
+            return false;
+        }
+        if (input.id === 'name' && input.value.length > 256) {
+            errorEl.textContent = 'Maximum 256 characters allowed.';
+            input.classList.add('is-invalid');
+            return false;
+        }
+        if (input.id === 'description' && input.value.length > 2000) {
+            errorEl.textContent = 'Maximum 2000 characters allowed.';
+            input.classList.add('is-invalid');
+            return false;
+        }
+        if (input.name === 'urls[]' && input.value.trim() && !/^https?:\/\/[^\s]+$/.test(input.value.trim())) {
+            document.getElementById('urls_error').textContent = 'Enter valid URLs (https://...)';
+            input.classList.add('is-invalid');
+            return false;
+        }
+        return true;
+    };
+
+    // --- Field-level validation ---
+    form.querySelectorAll('input, select, textarea').forEach(input => {
+        input.addEventListener('input', () => validateField(input));
+        input.addEventListener('change', () => validateField(input));
+    });
+
+    // --- File validation & preview ---
+    fileInput?.addEventListener('change', () => {
+        fileList.innerHTML = '';
+        document.getElementById('files_error').textContent = '';
+        Array.from(fileInput.files).forEach(file => {
+            if (!allowedTypes.includes(file.type)) {
+                document.getElementById('files_error').textContent = 'Invalid file type detected.';
+                fileInput.classList.add('is-invalid');
+            } else if (file.size > 20 * 1024 * 1024) {
+                document.getElementById('files_error').textContent = 'File exceeds 20MB size limit.';
+                fileInput.classList.add('is-invalid');
+            } else {
+                const div = document.createElement('div');
+                div.className = 'd-flex align-items-center justify-content-between border rounded p-2 mb-1';
+                div.innerHTML = `
+                    <span>${file.name}</span>
+                    <button type="button" class="btn btn-sm btn-outline-danger remove-file">Delete</button>`;
+                div.querySelector('.remove-file').addEventListener('click', () => {
+                    div.remove();
+                    const dataTransfer = new DataTransfer();
+                    Array.from(fileInput.files).forEach(f => { if (f.name !== file.name) dataTransfer.items.add(f); });
+                    fileInput.files = dataTransfer.files;
+                });
+                fileList.appendChild(div);
+            }
+        });
+    });
+
+    // --- Add URL ---
+    form.querySelector('#add-url').addEventListener('click', () => {
         const input = document.createElement('input');
         input.type = 'url';
         input.name = 'urls[]';
         input.className = 'form-control mb-2';
         input.placeholder = 'https://example.com';
-        container.appendChild(input);
+        input.addEventListener('input', () => validateField(input));
+        form.querySelector('#url-fields').appendChild(input);
     });
 
-    // Preview newly selected files
-    fileInput.addEventListener('change', function() {
-        Array.from(fileInput.files).forEach((file, index) => {
-            const li = document.createElement('li');
-            li.textContent = file.name + ' ';
-            const delBtn = document.createElement('button');
-            delBtn.type = 'button';
-            delBtn.textContent = 'Delete';
-            delBtn.className = 'btn btn-sm btn-danger ms-2';
-            delBtn.addEventListener('click', function() {
-                const dt = new DataTransfer();
-                Array.from(fileInput.files).forEach((f, i) => {
-                    if(i !== index) dt.items.add(f);
-                });
-                fileInput.files = dt.files;
-                li.remove();
-            });
-            li.appendChild(delBtn);
-            filePreview.appendChild(li);
-        });
-    });
-
-    // Delete existing uploaded files
-    document.querySelectorAll('.remove-existing-file').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const li = this.closest('li');
+    // --- Remove existing files (for edit form) ---
+    form.querySelectorAll('.remove-existing-file')?.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const li = e.target.closest('li');
             li.remove();
-            // optionally, create a hidden input to mark for deletion on backend
             const input = document.createElement('input');
             input.type = 'hidden';
             input.name = 'delete_files[]';
-            input.value = li.dataset.existingFile;
+            input.value = li.dataset.file;
             form.appendChild(input);
         });
     });
 
-    // Frontend Validation
-    form.addEventListener('submit', function(e) {
+    // --- Submit validation ---
+    form.addEventListener('submit', (e) => {
         let valid = true;
-        ['module_id_error','name_error','description_error','files_error','urls_error'].forEach(id => document.getElementById(id).textContent='');
-
-        // Module required
-        if(!form.module_id.value) {
-            document.getElementById('module_id_error').textContent = 'Module is required';
-            valid = false;
-        }
-
-        // Name required and max 256
-        if(!form.name.value.trim()) {
-            document.getElementById('name_error').textContent = 'User Guide name is required';
-            valid = false;
-        } else if(form.name.value.length > 256) {
-            document.getElementById('name_error').textContent = 'Name cannot exceed 256 characters';
-            valid = false;
-        }
-
-        // Description max 2000
-        if(form.description.value.length > 2000) {
-            document.getElementById('description_error').textContent = 'Description too long';
-            valid = false;
-        }
-
-        // File validation
-        Array.from(fileInput.files).forEach(file => {
-            const allowedTypes = ['image/jpeg','image/png','image/jpg','application/pdf','application/msword','application/vnd.openxmlformats-officedocument.wordprocessingml.document','video/mp4'];
-            if(!allowedTypes.includes(file.type)) {
-                document.getElementById('files_error').textContent = 'Invalid file type';
-                valid = false;
-            }
-            if(file.size > 20*1024*1024) {
-                document.getElementById('files_error').textContent = 'File size exceeds 20MB';
-                valid = false;
-            }
+        form.querySelectorAll('input, select, textarea').forEach(input => {
+            if (!validateField(input)) valid = false;
         });
-
-        // URLs validation
-        Array.from(form.querySelectorAll('input[name="urls[]"]')).forEach(urlInput => {
-            if(urlInput.value && !/^https?:\/\/[^\s]+$/.test(urlInput.value)) {
-                document.getElementById('urls_error').textContent = 'Invalid URL';
-                valid = false;
-            }
-        });
-
-        if(!valid) e.preventDefault();
+        if (fileInput && fileInput.files.length > 0) {
+            Array.from(fileInput.files).forEach(file => {
+                if (!allowedTypes.includes(file.type) || file.size > 20 * 1024 * 1024) valid = false;
+            });
+        }
+        if (!valid) {
+            e.preventDefault();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
     });
 });
 </script>
