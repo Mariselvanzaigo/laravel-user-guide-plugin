@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 use ModuleUserGuide\Http\Controllers\ModuleController;
 use ModuleUserGuide\Http\Controllers\UserGuideController;
 use Illuminate\Support\Facades\Route;

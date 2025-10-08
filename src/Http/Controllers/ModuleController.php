@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 namespace ModuleUserGuide\Http\Controllers;
 
 use ModuleUserGuide\Models\Module;
