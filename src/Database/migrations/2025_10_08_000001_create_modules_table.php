@@ -4,13 +4,17 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
-    public function up(): void {
-        Schema::create('modules', function (Blueprint $table) {
-            $table->id();
-            $table->string('name', 256);
-            $table->timestamps();
-        });
+    public function up(): void
+    {
+        if (!Schema::hasTable('modules')) {
+            Schema::create('modules', function (Blueprint $table) {
+                $table->id();
+                $table->string('name', 256);
+                $table->timestamps();
+            });
+        }
     }
+
     public function down(): void {
         Schema::dropIfExists('modules');
     }
