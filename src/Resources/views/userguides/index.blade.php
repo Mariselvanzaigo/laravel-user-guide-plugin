@@ -26,17 +26,17 @@
                 <td>{{ $guide->name }}</td>
                 <td title="{{ $guide->description }}">{{ Str::limit($guide->description,30) }}</td>
                 <td>
-                    @can('update', $guide)
+                    {{-- @can('update', $guide) --}}
                         <a href="{{ route('user-guides.edit', $guide) }}" class="btn btn-warning btn-sm">Edit</a>
-                    @endcan
+                    {{-- @endcan --}}
 
-                    @can('delete', $guide)
+                    {{-- @can('delete', $guide) --}}
                         <form method="POST" action="{{ route('user-guides.destroy', $guide) }}" style="display:inline">
                             @csrf
                             @method('DELETE')
                             <button class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this guide?')">Delete</button>
                         </form>
-                    @endcan
+                    {{-- @endcan --}}
                 </td>
             </tr>
         @endforeach
