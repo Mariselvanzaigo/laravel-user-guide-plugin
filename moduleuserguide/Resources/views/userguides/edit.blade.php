@@ -5,7 +5,7 @@
     /* userguide.css */
 #file-list, #existing-files {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(1, 1fr);
   gap: 0.75rem;
   list-style: none;
   padding: 0;
@@ -66,7 +66,31 @@
   color: #6b7280;
   font-size: .80rem;
 }
+.url-row {
+  display: flex;
+  gap: 0.5rem; /* spacing between input and button/error */
+  flex-wrap: wrap; /* allow error to go below */
+  align-items: flex-start;
+}
 
+.url-row input.form-control {
+  flex: 0 0 45; /* always 50% width */
+  max-width: 45%;
+}
+
+.url-row .remove-url {
+  flex: 0 0 3%; /* button width, adjust if needed */
+  max-width: 3%;
+  padding: 7px;
+}
+
+.url-row .invalid-feedback {
+  flex: 0 0 50%; /* error text takes remaining 40% */
+  max-width: 50%;
+  display: block; /* JS can toggle visibility */
+  margin-top: 0.25rem; 
+  padding-top: 4px;
+}
 /* small screen: single column */
 @media (max-width: 576px) {
   #file-list, #existing-files {
@@ -74,6 +98,7 @@
   }
 }
 </style>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
 <div class="container py-4">
     <h2>Edit User Guide</h2>
 
@@ -142,13 +167,19 @@
             <div id="url-fields">
                 @if($userGuide->urls)
                     @foreach($userGuide->urls as $url)
-                        <input type="url" name="urls[]" class="form-control mb-2" value="{{ $url }}">
+                        <div class="d-flex gap-2 mb-2 url-row">
+                            <input type="url" name="urls[]" class="form-control" placeholder="https://example.com" value="{{ $url }}">
+                            <button type="button" class="btn btn-sm btn-outline-danger remove-url">
+                                <i class="fa fa-trash"></i>
+                            </button>
+                            <div class="invalid-feedback"></div>
+                        </div>
                     @endforeach
                 @endif
             </div>
             <button type="button" class="btn btn-sm btn-secondary" id="add-url">Add URL</button>
-            <div class="invalid-feedback d-block" id="urls_error"></div>
         </div>
+
 
         <div class="mt-3">
             <button type="submit" class="btn btn-success">Update</button>

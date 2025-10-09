@@ -26,6 +26,21 @@ class UserGuideController extends Controller
         ]);
     }
 
+    public function view(Request $request)
+    {
+        $modules = Module::with('userGuides')->get();
+
+        // get module_id from request or default to first
+        $selectedModuleId = $request->get('module_id') ?? ($modules->first()->id ?? null);
+
+        // get selected module
+        $selectedModule = $modules->firstWhere('id', $selectedModuleId);
+        
+        return view('moduleuserguide::userguides.view', [
+            'modules' => $modules,
+            'selectedModule' => $selectedModule
+        ]);
+    }
 
     public function create() {
         // $this->authorize('create', UserGuide::class);
@@ -53,7 +68,7 @@ class UserGuideController extends Controller
         }
 
         $data['files'] = $files;
-        $data['urls'] = $request->urls ?? [];
+        $data['urls'] = array_filter($request->input('urls', []), fn($url) => !empty($url));
 
         $userGuide = UserGuide::create($data);
 
@@ -114,7 +129,7 @@ class UserGuideController extends Controller
         }
 
         $data['files'] = array_values($files);
-        $data['urls'] = $request->urls ?? [];
+        $data['urls'] = array_filter($request->input('urls', []), fn($url) => !empty($url));
 
         $userGuide->update($data);
 
