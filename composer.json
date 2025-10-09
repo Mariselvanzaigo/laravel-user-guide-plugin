@@ -1,5 +1,5 @@
 {
-    "name": "mariselvanzaigo/laravel-user-guide-plugin",
+    "name": "moduleuserguide/laravel-user-guide-plugin",
     "description": "A Laravel plugin to manage and display user guides or documentation inside an existing Laravel project.",
     "type": "library",
     "license": "MIT",
@@ -15,7 +15,7 @@
     },
     "autoload": {
         "psr-4": {
-            "ModuleUserGuide\\": "src/"
+            "ModuleUserGuide\\": "moduleuserguide/"
         }
     },
     "extra": {
