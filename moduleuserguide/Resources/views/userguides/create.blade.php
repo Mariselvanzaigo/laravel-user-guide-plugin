@@ -130,7 +130,7 @@
 @endsection
 @push('styles')
 <link href="{{ url('plugin-assets/css/toastr.min.css') }}" rel="stylesheet">
-<link href="{{ url('plugin-assets/css/userguide.css') }}" rel="stylesheet">
+{{-- <link href="{{ url('plugin-assets/css/userguide.css') }}" rel="stylesheet"> --}}
 @endpush
 
 @push('scripts')
