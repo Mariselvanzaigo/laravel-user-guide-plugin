@@ -4,9 +4,7 @@
 <div class="container">
     <h2>User Guides</h2>
 
-    {{-- @can('create', \ModuleUserGuide\Models\UserGuide::class) --}}
-        <a href="{{ route('user-guides.create') }}" class="btn btn-primary mb-3">Add User Guide</a>
-    {{-- @endcan --}}
+    <a href="{{ route('user-guides.create') }}" class="btn btn-primary mb-3">Add User Guide</a>
 
     <table class="table table-bordered">
         <thead>
@@ -19,30 +17,48 @@
             </tr>
         </thead>
         <tbody>
-        @foreach($userGuides as $guide)
+        @foreach($userGuides as $index => $guide)
             <tr>
-                <td>{{ $loop->iteration }}</td>
+                {{-- Serial number calculation based on pagination --}}
+                <td>{{ $userGuides->firstItem() + $index }}</td>
                 <td>{{ $guide->module->name }}</td>
                 <td>{{ $guide->name }}</td>
-                <td title="{{ $guide->description }}">{{ Str::limit($guide->description,30) }}</td>
+                <td title="{{ $guide->description }}">{{ Str::limit($guide->description, 30) }}</td>
                 <td>
-                    {{-- @can('update', $guide) --}}
-                        <a href="{{ route('user-guides.edit', $guide) }}" class="btn btn-warning btn-sm">Edit</a>
-                    {{-- @endcan --}}
+                    <a href="{{ route('user-guides.edit', $guide) }}" class="btn btn-warning btn-sm">Edit</a>
 
-                    {{-- @can('delete', $guide) --}}
-                        <form method="POST" action="{{ route('user-guides.destroy', $guide) }}" style="display:inline">
-                            @csrf
-                            @method('DELETE')
-                            <button class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this guide?')">Delete</button>
-                        </form>
-                    {{-- @endcan --}}
+                    <form method="POST" action="{{ route('user-guides.destroy', $guide) }}" style="display:inline">
+                        @csrf
+                        @method('DELETE')
+                        <button class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this guide?')">Delete</button>
+                    </form>
                 </td>
             </tr>
         @endforeach
         </tbody>
     </table>
 
-    {{ $userGuides->links() }}
+    {{-- Laravel pagination links --}}
+    <div class="d-flex justify-content-center">
+        {{ $userGuides->links('pagination::bootstrap-5') }}
+    </div>
 </div>
 @endsection
+
+@push('styles')
+<link href="{{ asset('vendor/moduleuserguide/css/toastr.min.css') }}" rel="stylesheet">
+<link href="{{ asset('vendor/moduleuserguide/css/userguide.css') }}" rel="stylesheet">
+@endpush
+@push('scripts')
+<script src="{{ asset('vendor/moduleuserguide/js/toastr.min.js') }}"></script>
+<script src="{{ asset('vendor/moduleuserguide/js/userguide.js') }}"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const msg = sessionStorage.getItem('userGuideSuccess');
+    if(msg){
+        toastr.success(msg);
+        sessionStorage.removeItem('userGuideSuccess');
+    }
+});
+</script>
+@endpush

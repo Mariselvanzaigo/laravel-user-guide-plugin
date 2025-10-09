@@ -26,7 +26,11 @@ class UserGuideRequest extends FormRequest
             'urls.*' => 'nullable|url'
         ];
     }
-
+    public function wantsJson(): bool
+    {
+        // Force validation to return JSON for AJAX requests
+        return $this->ajax() || parent::wantsJson();
+    }
     public function messages() {
         return [
             'module_id.required' => 'Select a module.',

@@ -11,14 +11,21 @@ class UserGuideController extends Controller
 {
     protected $layout = 'layouts.app';
 
-    public function index() {
-        // $this->authorize('viewAny', UserGuide::class);
-        $userGuides = UserGuide::with('module')->paginate(10);
+    // Controller
+    public function index()
+    {
+        $query = UserGuide::with('module')->orderByDesc('id');
+
+
+        // Paginate and append current query params
+        $userGuides = $query->paginate(10);
+
         return view('moduleuserguide::userguides.index', [
             'userGuides' => $userGuides,
             'layout' => $this->layout
         ]);
     }
+
 
     public function create() {
         // $this->authorize('create', UserGuide::class);
@@ -32,29 +39,37 @@ class UserGuideController extends Controller
     public function store(UserGuideRequest $request)
     {
         $data = $request->validated();
-        // handle file uploads
+
+        // Handle file uploads on public disk
         $files = [];
         if ($request->hasFile('files')) {
             foreach ($request->file('files') as $file) {
-                $files[] = $file->store('user-guides');
+                $path = $file->store('user-guides', 'public');
+                $files[] = [
+                    'path' => $path,
+                    'name' => $file->getClientOriginalName()
+                ];
             }
         }
+
         $data['files'] = $files;
         $data['urls'] = $request->urls ?? [];
 
-        UserGuide::create($data);
+        $userGuide = UserGuide::create($data);
 
         // Return JSON for AJAX request
         if ($request->ajax()) {
             return response()->json([
                 'success' => true,
-                'message' => 'User Guide created successfully!'
+                'redirect' => route('user-guides.index'),
+                'message' => 'User Guide created successfully!',
             ]);
         }
 
         return redirect()->route('user-guides.index')
                         ->with('success', 'User Guide created successfully!');
     }
+
 
 
 
@@ -68,22 +83,55 @@ class UserGuideController extends Controller
         ]);
     }
 
-    public function update(UserGuideRequest $request, UserGuide $userGuide) {
-        // $this->authorize('update', $userGuide);
+    public function update(UserGuideRequest $request, UserGuide $userGuide)
+    {
         $data = $request->validated();
 
         $files = $userGuide->files ?? [];
+
+        // Handle new file uploads
         if ($request->hasFile('files')) {
             foreach ($request->file('files') as $file) {
-                $files[] = $file->store('user-guides');
+                $path = $file->store('user-guides', 'public');
+                $files[] = [
+                    'path' => $path,
+                    'name' => $file->getClientOriginalName()
+                ];
             }
         }
-        $data['files'] = $files;
+
+        // Handle deleted files
+        if ($request->filled('delete_files')) {
+            foreach ($request->delete_files as $deletePath) {
+                foreach ($files as $key => $fileData) {
+                    if ($fileData['path'] === $deletePath) {
+                        Storage::disk('public')->delete($fileData['path']);
+                        unset($files[$key]);
+                    }
+                }
+            }
+            $files = array_values($files);
+        }
+
+        $data['files'] = array_values($files);
         $data['urls'] = $request->urls ?? [];
 
         $userGuide->update($data);
-        return redirect()->route('user-guides.index')->with('success','User Guide updated successfully!');
+
+        // Return JSON if AJAX request
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'redirect' => route('user-guides.index'),
+                'message' => 'User Guide updated successfully!',
+            ]);
+        }
+
+        return redirect()->route('user-guides.index')
+                        ->with('success', 'User Guide updated successfully!');
     }
+
+
 
     public function destroy(UserGuide $userGuide) {
         // $this->authorize('delete', $userGuide);

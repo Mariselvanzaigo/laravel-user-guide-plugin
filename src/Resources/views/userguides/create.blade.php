@@ -57,6 +57,7 @@
 @endsection
 @push('styles')
 <link href="{{ asset('vendor/moduleuserguide/css/toastr.min.css') }}" rel="stylesheet">
+<link href="{{ asset('vendor/moduleuserguide/css/userguide.css') }}" rel="stylesheet">
 @endpush
 
 @push('scripts')

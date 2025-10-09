@@ -1,0 +1,71 @@
+/* userguide.css */
+#file-list, #existing-files {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.file-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .5rem;
+  padding: .5rem .75rem;
+  border: 1px solid #e6eef6;
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: 0 1px 2px rgba(16,24,40,0.03);
+  min-height: 48px;
+  overflow: hidden;
+}
+
+.file-meta {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  min-width: 0;
+}
+
+.file-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #f3f7fb;
+  color: #2b6cb0;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.file-name {
+  display: inline-block;
+  max-width: calc(100% - 20px);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: .95rem;
+}
+
+.file-actions {
+  display:flex;
+  align-items:center;
+  gap:.5rem;
+  flex-shrink: 0;
+}
+
+.file-size {
+  color: #6b7280;
+  font-size: .80rem;
+}
+
+/* small screen: single column */
+@media (max-width: 576px) {
+  #file-list, #existing-files {
+    grid-template-columns: repeat(1, 1fr);
+  }
+}
