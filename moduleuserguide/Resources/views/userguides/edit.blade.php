@@ -84,12 +84,13 @@
     </form>
 </div>
 @endsection
+
 @push('styles')
-<link href="{{ asset('plugin-assets/css/toastr.min.css') }}" rel="stylesheet">
-<link href="{{ asset('plugin-assets/css/userguide.css') }}" rel="stylesheet">
+<link href="{{ url('plugin-assets/css/toastr.min.css') }}" rel="stylesheet">
+<link href="{{ url('plugin-assets/css/userguide.css') }}" rel="stylesheet">
 @endpush
 
 @push('scripts')
-<script src="{{ asset('plugin-assets/js/toastr.min.js') }}"></script>
-<script src="{{ asset('plugin-assets/js/userguide.js') }}"></script>
+<script src="{{ url('plugin-assets/js/toastr.min.js') }}"></script>
+<script src="{{ url('plugin-assets/js/userguide.js') }}"></script>
 @endpush
