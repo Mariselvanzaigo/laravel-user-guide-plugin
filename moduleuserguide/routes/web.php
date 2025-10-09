@@ -12,7 +12,7 @@ Route::prefix('module-user-guide')->group(function () {
 
 
 Route::get('plugin-assets/{path}', function ($path) {
-    $file = base_path('mariselvanzaigo/laravel-user-guide-plugin/moduleuserguide/Resources/assets/' . $path);
+    $file = base_path('vendor/moduleuserguide/laravel-user-guide-plugin/moduleuserguide/Resources/assets/' . $path);
 
     if (!File::exists($file)) {
         abort(404);
