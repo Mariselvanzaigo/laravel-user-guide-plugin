@@ -5,6 +5,7 @@ use ModuleUserGuide\Models\UserGuide;
 use ModuleUserGuide\Models\Module;
 use ModuleUserGuide\Http\Requests\UserGuideRequest;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Http\Request;
 use App\Http\Controllers\Controller; 
 
 class UserGuideController extends Controller
@@ -25,22 +26,35 @@ class UserGuideController extends Controller
             'layout' => $this->layout
         ]);
     }
-
     public function view(Request $request)
     {
+        // Load all modules with their guides
         $modules = Module::with('userGuides')->get();
 
-        // get module_id from request or default to first
-        $selectedModuleId = $request->get('module_id') ?? ($modules->first()->id ?? null);
+        if ($modules->isEmpty()) {
+            return view('moduleuserguide::userguides.view', [
+                'modules' => collect(),
+                'selectedModule' => null,
+            ]);
+        }
 
-        // get selected module
-        $selectedModule = $modules->firstWhere('id', $selectedModuleId);
-        
+        // Get module_id from request or fallback to the first module
+        $selectedModuleId = $request->get('module_id');
+
+        // Redirect to ?module_id=first if none provided
+        if (!$selectedModuleId) {
+            return redirect()->route('user-guides.view', ['module_id' => $modules->first()->id]);
+        }
+
+        // Find the selected module
+        $selectedModule = $modules->firstWhere('id', $selectedModuleId) ?? $modules->first();
+
         return view('moduleuserguide::userguides.view', [
             'modules' => $modules,
-            'selectedModule' => $selectedModule
+            'selectedModule' => $selectedModule,
         ]);
     }
+
 
     public function create() {
         // $this->authorize('create', UserGuide::class);

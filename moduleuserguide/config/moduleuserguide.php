@@ -9,6 +9,7 @@ return [
         'delete_module' => 'delete module',
         'create_user_guide' => 'create user guide',
         'index_user_guide' => 'index user guide',
+        'view_user_guide' => 'view user guide',
         'store_user_guide' => 'store user guide',
         'edit_user_guide' => 'edit user guide',
         'update_user_guide' => 'update user guide',

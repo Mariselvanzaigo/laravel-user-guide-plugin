@@ -8,6 +8,9 @@ use Illuminate\Support\Facades\Response;
 Route::prefix('module-user-guide')->group(function () {
     Route::resource('modules', ModuleController::class);
     Route::resource('user-guides', UserGuideController::class);
+    Route::get('user-guides/view', [UserGuideController::class, 'view'])
+        ->name('user-guides.view');
+
 });
 
 
