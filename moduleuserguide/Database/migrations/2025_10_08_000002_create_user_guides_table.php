@@ -8,7 +8,7 @@ return new class extends Migration {
         if (!Schema::hasTable('user_guides')) {
             Schema::create('user_guides', function (Blueprint $table) {
                 $table->id();
-                $table->foreignId('module_id')->constrained('modules')->cascadeOnDelete();
+                $table->foreignId('module_id')->constrained('user_guide_modules')->onDelete('cascade');
                 $table->string('name', 256);
                 $table->text('description')->nullable();
                 $table->json('files')->nullable();

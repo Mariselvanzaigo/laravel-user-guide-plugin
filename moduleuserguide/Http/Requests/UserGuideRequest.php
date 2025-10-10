@@ -12,7 +12,7 @@ class UserGuideRequest extends FormRequest
         $userGuideId = $this->route('user_guide')?->id ?? null;
 
         return [
-            'module_id' => 'required|exists:modules,id',
+            'module_id' => 'required|exists:user_guide_modules,id',
             'name' => [
                 'required',
                 'string',

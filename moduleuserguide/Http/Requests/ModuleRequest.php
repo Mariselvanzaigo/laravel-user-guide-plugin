@@ -9,10 +9,10 @@ class ModuleRequest extends FormRequest
 
     public function rules()
     {
-        $moduleId = $this->route('module')?->id ?? null;
-
+        $module = $this->route('user_guide_module'); 
+        $moduleId = $module ? $module->id : null;
         return [
-            'name' => 'required|string|max:256|unique:modules,name,' . $moduleId,
+            'name' => 'required|string|max:256|unique:user_guide_modules,name,' . $moduleId. ',id',
         ];
     }
 }

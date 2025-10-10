@@ -13,7 +13,7 @@ class ModuleController extends Controller
     public function index() {
         // $this->authorize('index', Module::class);
         $modules = Module::paginate(10);
-        return view('moduleuserguide::modules.index', [
+        return view('moduleuserguide::user_guide_modules.index', [
             'modules' => $modules,
             'layout' => $this->layout
         ]);
@@ -21,7 +21,7 @@ class ModuleController extends Controller
 
     public function create() {
         // $this->authorize('create', Module::class);
-        return view('moduleuserguide::modules.create', [
+        return view('moduleuserguide::user_guide_modules.create', [
             'layout' => $this->layout
         ]);
     }
@@ -29,26 +29,26 @@ class ModuleController extends Controller
     public function store(ModuleRequest $request) {
         // $this->authorize('store', Module::class); // fixed undefined $module
         Module::create($request->validated());
-        return redirect()->route('modules.index')->with('success', 'Module created successfully!');
+        return redirect()->route('user_guide_modules.index')->with('success', 'Module created successfully!');
     }
 
-    public function edit(Module $module) {
+    public function edit(Module $user_guide_module) {
         // $this->authorize('edit', $module);
-        return view('moduleuserguide::modules.edit', [
-            'module' => $module,
+        return view('moduleuserguide::user_guide_modules.edit', [
+            'module' => $user_guide_module,
             'layout' => $this->layout
         ]);
     }
 
-    public function update(ModuleRequest $request, Module $module) {
+    public function update(ModuleRequest $request, Module $user_guide_module) {
         // $this->authorize('update', $module);
-        $module->update($request->validated());
-        return redirect()->route('modules.index')->with('success', 'Module updated successfully!');
+        $user_guide_module->update($request->validated());
+        return redirect()->route('user_guide_modules.index')->with('success', 'Module updated successfully!');
     }
 
-    public function destroy(Module $module) {
+    public function destroy(Module $user_guide_module) {
         // $this->authorize('delete', $module);
-        $module->delete();
-        return redirect()->route('modules.index')->with('success', 'Module deleted successfully!');
+        $user_guide_module->delete();
+        return redirect()->route('user_guide_modules.index')->with('success', 'Module deleted successfully!');
     }
 }

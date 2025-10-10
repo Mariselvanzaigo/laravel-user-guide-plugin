@@ -11,7 +11,7 @@ if (view()->exists('larasnap::layouts.app')) {
 <div class="container">
     <h2>Edit Module</h2>
     {{-- @can('update', $module) --}}
-    <form action="{{ route('modules.update', $module) }}" method="POST">
+    <form action="{{ route('user_guide_modules.update', ['user_guide_module' => $module->id]) }}" method="POST">
         @csrf
         @method('PUT')
         <div class="form-group mb-3">
@@ -20,7 +20,7 @@ if (view()->exists('larasnap::layouts.app')) {
             @error('name') <span class="text-danger">{{ $message }}</span> @enderror
         </div>
         <button class="btn btn-success">Update</button>
-        <a href="{{ route('modules.index') }}" class="btn btn-secondary">Back</a>
+        <a href="{{ route('user_guide_modules.index') }}" class="btn btn-secondary">Back</a>
     </form>
     {{-- @else
         <div class="alert alert-danger">You do not have permission to edit this module.</div>
