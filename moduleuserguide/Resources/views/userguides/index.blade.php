@@ -6,7 +6,7 @@
     <h2>User Guides</h2>
 
     <a href="{{ route('user-guides.create') }}" class="btn btn-primary mb-3">Add User Guide</a>
-    <a href="{{ route('user-guides.view') }}" class="btn btn-primary mb-3">View User Guide</a>
+    <a href="{{ route('user-guides.show') }}" class="btn btn-primary mb-3">View User Guide</a>
 
     <table class="table table-bordered">
         <thead>

@@ -26,35 +26,41 @@ class UserGuideController extends Controller
             'layout' => $this->layout
         ]);
     }
-    public function view(Request $request)
+    public function show(Request $request)
     {
-        // Load all modules with their guides
-        $modules = Module::with('userGuides')->get();
+        // Load all modules with their related user guides
+        $modules = Module::with(['userGuides' => function ($query) {
+            $query->orderByDesc('created_at'); // Order user guides by latest first
+        }])->get();
 
         if ($modules->isEmpty()) {
-            return view('moduleuserguide::userguides.view', [
+            return view('moduleuserguide::userguides.show', [
                 'modules' => collect(),
                 'selectedModule' => null,
             ]);
         }
 
-        // Get module_id from request or fallback to the first module
-        $selectedModuleId = $request->get('module_id');
+        // Get selected module ID from request, or default to first module’s ID
+        $selectedModuleId = $request->get('module_id') ?? $modules->first()->id;
 
-        // Redirect to ?module_id=first if none provided
-        if (!$selectedModuleId) {
-            return redirect()->route('user-guides.view', ['module_id' => $modules->first()->id]);
+        // If no module_id in URL, redirect with the first module’s ID
+        if (!$request->has('module_id')) {
+            return redirect()->route('user-guides.show', ['module_id' => $selectedModuleId]);
         }
 
-        // Find the selected module
-        $selectedModule = $modules->firstWhere('id', $selectedModuleId) ?? $modules->first();
+        // Find the selected module (with its user guides)
+        $selectedModule = $modules->firstWhere('id', $selectedModuleId);
 
-        return view('moduleuserguide::userguides.view', [
+        // In case invalid module_id is passed
+        if (!$selectedModule) {
+            $selectedModule = $modules->first();
+        }
+        // dd($selectedModule);
+        return view('moduleuserguide::userguides.show', [
             'modules' => $modules,
             'selectedModule' => $selectedModule,
         ]);
     }
-
 
     public function create() {
         // $this->authorize('create', UserGuide::class);
