@@ -1,4 +1,12 @@
-@extends($layout ?? 'layouts.app')
+@php
+if (view()->exists('larasnap::layouts.app')) {
+    $layoutToUse = 'larasnap::layouts.app';
+} else {
+    $layoutToUse = $layout ?? 'layouts.app';
+}
+
+@endphp
+@extends($layoutToUse)
 
 @section('content')
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
@@ -47,12 +55,8 @@
 </div>
 @endsection
 
-@push('styles')
 <link href="{{ url('plugin-assets/css/toastr.min.css') }}" rel="stylesheet">
 <link href="{{ url('plugin-assets/css/userguide.css') }}" rel="stylesheet">
-@endpush
-
-@push('scripts')
 <script src="{{ url('plugin-assets/js/toastr.min.js') }}"></script>
 <script src="{{ url('plugin-assets/js/userguide.js') }}"></script>
 <script>
@@ -64,4 +68,3 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 </script>
-@endpush

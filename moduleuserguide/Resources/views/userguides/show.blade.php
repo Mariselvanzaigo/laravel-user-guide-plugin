@@ -1,5 +1,12 @@
-@extends($layout ?? 'layouts.app')
-@section('title','User Guide')
+@php
+if (view()->exists('larasnap::layouts.app')) {
+    $layoutToUse = 'larasnap::layouts.app';
+} else {
+    $layoutToUse = $layout ?? 'layouts.app';
+}
+
+@endphp
+@extends($layoutToUse)
 @section('content')
 
 <!-- Bootstrap CSS -->
@@ -152,8 +159,6 @@
 </div>
 
 @endsection
-
-@push('styles')
 <style>
 .pointer { cursor: pointer; }
 .accordion-header { background: #f8f9fa; padding: 12px 15px; font-weight: 500; border-bottom: 1px solid #ddd; }
@@ -170,10 +175,6 @@
 .file-box { background:#f8f9fa; padding:10px; border-radius:4px; }
 .file-box img, .file-box video, .file-box embed, .file-box iframe { max-height:120px; border-radius:4px; margin-top:5px; }
 </style>
-@endpush
-
-@push('scripts')
-
 <!-- Bootstrap JS Bundle -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <!-- jQuery (required by Select2) -->
@@ -239,4 +240,3 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 </script>
-@endpush

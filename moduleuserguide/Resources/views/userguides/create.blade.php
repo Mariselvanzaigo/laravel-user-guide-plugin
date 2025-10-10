@@ -1,4 +1,13 @@
-@extends($layout ?? 'layouts.app')
+@php
+if (view()->exists('larasnap::layouts.app')) {
+    $layoutToUse = 'larasnap::layouts.app';
+} else {
+    $layoutToUse = $layout ?? 'layouts.app';
+}
+
+@endphp
+@extends($layoutToUse)
+
 
 @section('content')
 <style>
@@ -129,12 +138,6 @@
     </form>
 </div>
 @endsection
-@push('styles')
 <link href="{{ url('plugin-assets/css/toastr.min.css') }}" rel="stylesheet">
-{{-- <link href="{{ url('plugin-assets/css/userguide.css') }}" rel="stylesheet"> --}}
-@endpush
-
-@push('scripts')
 <script src="{{ url('plugin-assets/js/toastr.min.js') }}"></script>
 <script src="{{ url('plugin-assets/js/userguide.js') }}"></script>
-@endpush

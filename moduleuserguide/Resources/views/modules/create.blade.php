@@ -1,4 +1,12 @@
-@extends($layout ?? 'layouts.app')
+@php
+if (view()->exists('larasnap::layouts.app')) {
+    $layoutToUse = 'larasnap::layouts.app';
+} else {
+    $layoutToUse = $layout ?? 'layouts.app';
+}
+
+@endphp
+@extends($layoutToUse)
 
 @section('content')
 <div class="container">
