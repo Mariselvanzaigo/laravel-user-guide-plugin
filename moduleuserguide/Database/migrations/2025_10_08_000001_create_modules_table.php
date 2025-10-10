@@ -6,8 +6,8 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up(): void
     {
-        if (!Schema::hasTable('modules')) {
-            Schema::create('modules', function (Blueprint $table) {
+        if (!Schema::hasTable('user_guide_modules')) {
+            Schema::create('user_guide_modules', function (Blueprint $table) {
                 $table->id();
                 $table->string('name', 256);
                 $table->timestamps();
@@ -16,6 +16,6 @@ return new class extends Migration {
     }
 
     public function down(): void {
-        Schema::dropIfExists('modules');
+        Schema::dropIfExists('user_guide_modules');
     }
 };
