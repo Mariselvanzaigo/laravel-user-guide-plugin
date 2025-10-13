@@ -1,6 +1,7 @@
 // userguide.js
 (function () {
   document.addEventListener('DOMContentLoaded', () => {
+    
     const form = document.querySelector('#userGuideCreateForm') || document.querySelector('#userGuideEditForm');
     if (!form) return;
 
@@ -9,12 +10,19 @@
     const existingContainer = form.querySelector('#existing-files');
     const urlFields = form.querySelector('#url-fields');
     const addUrlBtn = form.querySelector('#add-url');
-
     const allowedTypes = [
-      'image/jpeg','image/png','image/jpg','application/pdf',
-      'application/msword','application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-      'video/mp4','video/x-m4v','application/octet-stream','video/quicktime'
+      'image/jpeg',
+      'image/png',
+      'image/jpg',
+      'application/pdf',
+      'application/msword',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'video/mp4',
+      'video/x-m4v',
+      'application/octet-stream', // sometimes mp4 can appear as this
+      'video/quicktime'
     ];
+
 
     let filesArray = [];
     let existingFiles = [];
@@ -38,22 +46,32 @@
     // ---------- Add URL input row ----------
     function addUrlInput(value = '') {
       const row = document.createElement('div');
-      row.className = 'd-flex gap-2 mb-2 url-row';
+      row.className = 'd-flex align-items-start gap-2 mb-2 url-row flex-wrap';
       row.innerHTML = `
-        <input type="url" name="urls[]" class="form-control" placeholder="https://example.com" value="${value}">
-        <button type="button" class="btn btn-sm btn-outline-danger remove-url"><i class="fa fa-trash"></i></button>
-        <div class="invalid-feedback"></div>
+        <div class="url-input-wrapper row m-0">
+          <input type="url" name="urls[]" class="form-control w-75" placeholder="https://example.com" value="${value}">
+          <button type="button" class="btn btn-sm btn-outline-danger remove-url" style="height: 38px;margin-left: 10px;">
+            <i class="fa fa-trash"></i>
+          </button>
+        </div>
+        <div class="url-error-wrapper" style="flex-basis: 50%; display: flex; align-items: center;">
+          <div class="invalid-feedback d-block" style="display: none;"></div>
+        </div>
       `;
+
       const btn = row.querySelector('.remove-url');
       btn.addEventListener('click', () => row.remove());
 
       const input = row.querySelector('input[name="urls[]"]');
-      input.addEventListener('input', () => validateField(input));
-      input.addEventListener('change', () => validateField(input));
+      const errorBox = row.querySelector('.invalid-feedback');
+
+      input.addEventListener('input', () => validateField(input, errorBox));
+      input.addEventListener('change', () => validateField(input, errorBox));
 
       urlFields.appendChild(row);
       return row;
     }
+
 
     if (urlFields && urlFields.children.length === 0) addUrlInput();
 
@@ -106,7 +124,7 @@
       if (input.name === 'urls[]' && input.value.trim()) {
         const urlRegex = /^(https?:\/\/)([\w-]+\.)+[\w-]{2,}([\/\w .-]*)*\/?$/;
         if (!urlRegex.test(input.value.trim())) {
-          errorEl.textContent = 'Enter valid URL (https://example.com)';
+          errorEl.textContent = 'Enter valid URL';
           errorEl.style.display = 'block';
           input.classList.add('is-invalid');
           return false;

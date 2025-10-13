@@ -13,7 +13,7 @@ if (view()->exists('larasnap::layouts.app')) {
     /* userguide.css */
 #file-list, #existing-files {
   display: grid;
-  grid-template-columns: repeat(1, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 0.75rem;
   list-style: none;
   padding: 0;
@@ -74,30 +74,34 @@ if (view()->exists('larasnap::layouts.app')) {
   color: #6b7280;
   font-size: .80rem;
 }
+
+.select2 .selection .select2-selection{
+    height: 38px;
+    padding: 5px;
+}
+.select2 .selection .select2-selection .select2-selection__arrow{
+  margin-top: 5px;
+}
+#fileInput{
+  padding: 8px;
+  height: 45px;
+}
 .url-row {
   display: flex;
-  gap: 0.5rem; /* spacing between input and button/error */
-  flex-wrap: wrap; /* allow error to go below */
   align-items: flex-start;
+  gap: 0.5rem;
+  flex-wrap: nowrap;
 }
 
-.url-row input.form-control {
-  flex: 0 0 45; /* always 50% width */
-  max-width: 45%;
+.url-input-wrapper,
+.url-error-wrapper {
+  flex: 1 1 50%;
 }
 
-.url-row .remove-url {
-  flex: 0 0 3%; /* button width, adjust if needed */
-  max-width: 3%;
-  padding: 7px;
-}
-
-.url-row .invalid-feedback {
-  flex: 0 0 50%; /* error text takes remaining 40% */
-  max-width: 50%;
-  display: block; /* JS can toggle visibility */
-  margin-top: 0.25rem; 
-  padding-top: 4px;
+.url-error-wrapper .invalid-feedback {
+  font-size: 0.875rem;
+  color: #dc3545;
+  margin-top: -7px;
 }
 /* small screen: single column */
 @media (max-width: 576px) {
@@ -106,9 +110,16 @@ if (view()->exists('larasnap::layouts.app')) {
   }
 }
 </style>
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+<!-- Select2 CSS for searchable dropdown -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <div class="container py-4">
+  <div class="row">
+    <!-- Back Button -->
+    <div><a href="{{ route('user-guides.index') }}" class="btn btn-secondary m-1"><i class="fas fa-arrow-left me-1"></i></a></div>
     <h2>Edit User Guide</h2>
+  </div>
 
     <form id="userGuideEditForm" action="{{ route('user-guides.update', $userGuide) }}" method="POST" enctype="multipart/form-data" novalidate>
         @csrf
@@ -117,7 +128,7 @@ if (view()->exists('larasnap::layouts.app')) {
         {{-- Module --}}
         <div class="mb-3">
             <label for="module_id" class="form-label fw-semibold">Select Module <span class="text-danger">*</span></label>
-            <select name="module_id" id="module_id" class="form-select" required>
+            <select name="module_id" id="module_id" class="form-select w-auto d-inline-block" required>
                 <option value="">Select Module</option>
                 @foreach($modules as $module)
                     <option value="{{ $module->id }}" {{ $userGuide->module_id == $module->id ? 'selected' : '' }}>
@@ -131,14 +142,14 @@ if (view()->exists('larasnap::layouts.app')) {
         {{-- Name --}}
         <div class="mb-3">
             <label for="name" class="form-label fw-semibold">User Guide Name <span class="text-danger">*</span></label>
-            <input type="text" name="name" id="name" class="form-control" maxlength="256" value="{{ old('name', $userGuide->name) }}" required>
+            <input type="text" name="name" id="name" class="form-control" maxlength="256" placeholder="Enter User Guide Name" value="{{ old('name', $userGuide->name) }}" required>
             <div class="invalid-feedback" id="name_error"></div>
         </div>
 
         {{-- Description --}}
         <div class="mb-3">
             <label for="description" class="form-label fw-semibold">Description</label>
-            <textarea name="description" id="description" class="form-control" maxlength="2000" rows="3">{{ old('description', $userGuide->description) }}</textarea>
+            <textarea name="description" id="description" class="form-control" maxlength="2000" placeholder="Enter Description" rows="3">{{ old('description', $userGuide->description) }}</textarea>
             <div class="invalid-feedback" id="description_error"></div>
         </div>
 
@@ -149,7 +160,7 @@ if (view()->exists('larasnap::layouts.app')) {
             <div id="existing-files" class="row g-2 mb-2">
                 @if($userGuide->files)
                     @foreach($userGuide->files ?? [] as $file)
-                        <div class="col-md-6">
+                        <div class="col-md-6 p-0">
                             <div class="border rounded p-2 d-flex justify-content-between align-items-center existing-file-box" 
                                 data-existing-file="{{ $file['path'] }}" title="{{ $file['name'] }}">
                                 <a href="{{ Storage::url($file['path']) }}" target="_blank" class="text-truncate" style="max-width: 75%">
@@ -164,7 +175,7 @@ if (view()->exists('larasnap::layouts.app')) {
                 @endif
             </div>
 
-            <input type="file" name="files[]" id="fileInput" class="form-control" multiple>
+            <input type="file" name="files[]" id="fileInput" class="form-control" accept=".jpg,.jpeg,.png,.pdf,.doc,.docx,.mp4" multiple>
             <div id="file-list" class="mt-2 row g-2"></div>
             <div class="invalid-feedback d-block" id="files_error"></div>
         </div>
@@ -197,6 +208,24 @@ if (view()->exists('larasnap::layouts.app')) {
 </div>
 @endsection
 
+<!-- Bootstrap JS Bundle -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- Select2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    // Initialize Select2
+    $('#module_id').select2({
+        placeholder: "Select Module",
+        width: '100%'
+    }).on('change', function() {
+        $('#filterForm').submit();
+    });
+  });
+</script>
 <link href="{{ url('plugin-assets/css/toastr.min.css') }}" rel="stylesheet">
 <script src="{{ url('plugin-assets/js/toastr.min.js') }}"></script>
 <script src="{{ url('plugin-assets/js/userguide.js') }}"></script>

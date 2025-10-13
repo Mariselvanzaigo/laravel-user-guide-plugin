@@ -4,23 +4,22 @@ if (view()->exists('larasnap::layouts.app')) {
 } else {
     $layoutToUse = $layout ?? 'layouts.app';
 }
-
 @endphp
 @extends($layoutToUse)
 @section('content')
 
-<!-- Bootstrap CSS -->
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <!-- Font Awesome -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
 <!-- Select2 CSS for searchable dropdown -->
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
 <div class="container mt-4">
+    <div class="row">
+    <!-- Back Button -->
+    <div><a href="{{ route('user-guides.index') }}" class="btn btn-secondary m-2"><i class="fas fa-arrow-left me-1"></i></a></div>
     <h1 class="mb-4">User Guides</h1>
-
+    </div>
     <!-- Module Selection -->
-    
     <form id="filterForm" method="GET" action="{{ route('user-guides.show') }}" class="mb-4">
         <label for="moduleSelect">Select Module:</label>
         <select name="module_id" id="moduleSelect" class="form-select w-auto d-inline-block">
@@ -40,24 +39,14 @@ if (view()->exists('larasnap::layouts.app')) {
                     $collapseId = 'guide' . $index;
                     $isFirst = $index === 0;
 
-                    // Safe decoding for files
                     $files = [];
                     if(!empty($guide->files)) {
-                        if(is_string($guide->files)) {
-                            $files = json_decode($guide->files, true) ?: [];
-                        } elseif(is_array($guide->files)) {
-                            $files = $guide->files;
-                        }
+                        $files = is_string($guide->files) ? json_decode($guide->files, true) : $guide->files;
                     }
 
-                    // Safe decoding for urls
                     $urls = [];
                     if(!empty($guide->urls)) {
-                        if(is_string($guide->urls)) {
-                            $urls = json_decode($guide->urls, true) ?: [];
-                        } elseif(is_array($guide->urls)) {
-                            $urls = $guide->urls;
-                        }
+                        $urls = is_string($guide->urls) ? json_decode($guide->urls, true) : $guide->urls;
                     }
                 @endphp
 
@@ -100,8 +89,8 @@ if (view()->exists('larasnap::layouts.app')) {
                                             @elseif($isDoc)
                                                 <iframe src="https://docs.google.com/gview?url={{ $url }}&embedded=true" style="width:100%; height:120px;" frameborder="0" class="mt-1"></iframe>
                                             @endif
-                                            <div class="mt-2 d-flex gap-2">
-                                                <a href="{{ $url }}" target="_blank" class="btn btn-sm btn-primary">Open</a>
+                                            <div class="mt-2 d-flex">
+                                                <a href="{{ $url }}" target="_blank" class="btn btn-sm btn-primary mr-2">Open</a>
                                                 <button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#fileModal{{ $index }}_{{ $fIndex }}">Preview</button>
                                             </div>
                                         </div>
@@ -112,7 +101,7 @@ if (view()->exists('larasnap::layouts.app')) {
                                                 <div class="modal-content" style="height:600px;">
                                                     <div class="modal-header">
                                                         <h5 class="modal-title">{{ $filename }}</h5>
-                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                     </div>
                                                     <div class="modal-body text-center d-flex justify-content-center align-items-center" style="height:500px;">
                                                         @if($isImage)
@@ -159,84 +148,70 @@ if (view()->exists('larasnap::layouts.app')) {
 </div>
 
 @endsection
+
 <style>
 .pointer { cursor: pointer; }
 .accordion-header { background: #f8f9fa; padding: 12px 15px; font-weight: 500; border-bottom: 1px solid #ddd; }
 .accordion-header i { transition: transform 0.3s; }
-.accordion-header.active i {
-    transform: rotate(180deg);
-    background: #cfcfcf;
-}
-.accordion-header{
-    cursor: pointer;
-}
+.accordion-header.active i { transform: rotate(180deg); background: #cfcfcf; }
 .accordion-item { box-shadow: 0 1px 4px rgba(0,0,0,0.1); border-radius: 5px; }
 .accordion-content { background: #fff; border-left: 1px solid #ddd; border-right:1px solid #ddd; border-bottom:1px solid #ddd; padding:15px; margin-top:-1px; }
-.file-box { background:#f8f9fa; padding:10px; border-radius:4px; }
 .file-box img, .file-box video, .file-box embed, .file-box iframe { max-height:120px; border-radius:4px; margin-top:5px; }
 </style>
+
 <!-- Bootstrap JS Bundle -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<!-- jQuery (required by Select2) -->
+<!-- jQuery -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <!-- Select2 JS -->
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-     // Initialize Select2
+    // Initialize Select2
     $('#moduleSelect').select2({
         placeholder: "Select Module",
         width: '200px'
     }).on('change', function() {
         $('#filterForm').submit();
     });
+
+    // Accordion
     const headers = document.querySelectorAll('.accordion-header');
     headers.forEach((header, index) => {
-        header.style.cursor = "pointer"; 
         const targetId = header.dataset.target;
         const targetContent = document.querySelector(targetId);
         const icon = header.querySelector('i');
 
-        // Default: first accordion expanded
         if (index === 0) {
             targetContent.style.display = 'block';
             header.style.backgroundColor = '#cfcfcf';
-            icon.classList.remove('fa-chevron-down');
-            icon.classList.add('fa-chevron-up');
+            icon.classList.replace('fa-chevron-down','fa-chevron-up');
         } else {
             targetContent.style.display = 'none';
-            icon.classList.remove('fa-chevron-up');
-            icon.classList.add('fa-chevron-down');
+            icon.classList.replace('fa-chevron-up','fa-chevron-down');
         }
 
-        // Click toggle
         header.addEventListener('click', function () {
-            // Close all
             headers.forEach(h => {
                 const c = document.querySelector(h.dataset.target);
                 if (c !== targetContent) {
                     c.style.display = 'none';
                     h.style.backgroundColor = '#f8f9fa';
-                    h.querySelector('i').classList.remove('fa-chevron-up');
-                    h.querySelector('i').classList.add('fa-chevron-down');
+                    h.querySelector('i').classList.replace('fa-chevron-up','fa-chevron-down');
                 }
             });
 
-            // Toggle clicked
             if (targetContent.style.display === 'block') {
                 targetContent.style.display = 'none';
                 header.style.backgroundColor = '#f8f9fa';
-                icon.classList.remove('fa-chevron-up');
-                icon.classList.add('fa-chevron-down');
+                icon.classList.replace('fa-chevron-up','fa-chevron-down');
             } else {
                 targetContent.style.display = 'block';
                 header.style.backgroundColor = '#cfcfcf';
-                icon.classList.remove('fa-chevron-down');
-                icon.classList.add('fa-chevron-up');
+                icon.classList.replace('fa-chevron-down','fa-chevron-up');
             }
         });
     });
 });
-
 </script>
