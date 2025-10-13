@@ -4,23 +4,61 @@ if (view()->exists('larasnap::layouts.app')) {
 } else {
     $layoutToUse = $layout ?? 'layouts.app';
 }
+
+// Dynamic prefix based on first URL segment
+$prefix = request()->segment(1) ?? 'default';
 @endphp
+
 @extends($layoutToUse)
 @section('content')
+<style>
+    .container_plugin_module{
+    height: auto;
+    min-height: 700px;
+    }
+    .close_btn_fnt{
+        border-radius: 50%;
+        border: none;
+        width: 25px;
+        height: 25px;
+        background-color: #bcbcbc;
+    }
+    .user-guide-description {
+        line-height: 1.5;
+        border: 1px solid #c1c1c1;
+        border-radius: 4px;
+        padding: 10px;
+    }
 
+    .user-guide-description table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    .user-guide-description table, 
+    .user-guide-description th, 
+    .user-guide-description td {
+        border: 1px solid #ddd;
+        padding: 8px;
+    }
+
+    .user-guide-description ul, .user-guide-description ol {
+        padding-left: 20px;
+    }
+</style>
 <!-- Font Awesome -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
 <!-- Select2 CSS for searchable dropdown -->
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
-<div class="container mt-4">
+<div class="container mt-4 m-4">
     <div class="row">
-    <!-- Back Button -->
-    <div><a href="{{ route('user-guides.index') }}" class="btn btn-secondary m-2"><i class="fas fa-arrow-left me-1"></i></a></div>
-    <h1 class="mb-4">User Guides</h1>
+        <!-- Back Button -->
+        <div><a href="{{ route($prefix . '.module-user-guide.user-guides.index') }}" class="btn btn-secondary m-2"><i class="fas fa-arrow-left me-1"></i></a></div>
+        <h1 class="mb-4">User Guides</h1>
     </div>
     <!-- Module Selection -->
-    <form id="filterForm" method="GET" action="{{ route('user-guides.show') }}" class="mb-4">
+    <form id="filterForm" method="GET" action="{{ route($prefix . '.module-user-guide.user-guides.show') }}" class="mb-4">
         <label for="moduleSelect">Select Module:</label>
         <select name="module_id" id="moduleSelect" class="form-select w-auto d-inline-block">
             @foreach($modules as $module)
@@ -57,7 +95,7 @@ if (view()->exists('larasnap::layouts.app')) {
                         <i class="fas fa-chevron-down"></i>
                     </div>
                     <div class="accordion-content border-top p-3" id="{{ $collapseId }}" style="display: {{ $isFirst ? 'block' : 'none' }};">
-                        <p><strong>Description:</strong> {{ $guide->description }}</p>
+                        <p><strong>Description:</strong> <div class="user-guide-description">{!! $guide->description !!}</div></p>
 
                         <!-- Files -->
                         @if(!empty($files))
@@ -101,7 +139,7 @@ if (view()->exists('larasnap::layouts.app')) {
                                                 <div class="modal-content" style="height:600px;">
                                                     <div class="modal-header">
                                                         <h5 class="modal-title">{{ $filename }}</h5>
-                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        <button type="button" class="btn-close close_btn_fnt" data-bs-dismiss="modal" aria-label="Close"><i class="fa fa-times"></i></button>
                                                     </div>
                                                     <div class="modal-body text-center d-flex justify-content-center align-items-center" style="height:500px;">
                                                         @if($isImage)

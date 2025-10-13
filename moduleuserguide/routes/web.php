@@ -4,23 +4,24 @@ use ModuleUserGuide\Http\Controllers\UserGuideController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Response;
+$prefix = request()->segment(1) ?? 'default'; 
+Route::prefix($prefix . '/module-user-guide')
+    ->name($prefix . '.module-user-guide.') // dynamic route names
+    ->group(function () {
 
-Route::prefix('admin')->group(function () {
-    Route::prefix('module-user-guide')->group(function () {
+        // Resource routes
         Route::resource('user_guide_modules', ModuleController::class);
         Route::resource('user-guides', UserGuideController::class);
+
+        // Optional custom show
         Route::get('user-guides/show', [UserGuideController::class, 'show'])
             ->name('user-guides.show');
 
+        // CKEditor image upload
+        Route::post('user-guides/upload-image', [UserGuideController::class, 'uploadImage'])
+            ->name('user-guides.upload-image');
     });
-});
-Route::prefix('module-user-guide')->group(function () {
-    Route::resource('user_guide_modules', ModuleController::class);
-    Route::resource('user-guides', UserGuideController::class);
-    Route::get('user-guides/show', [UserGuideController::class, 'show'])
-        ->name('user-guides.show');
 
-});
 
 
 Route::get('plugin-assets/{path}', function ($path) {

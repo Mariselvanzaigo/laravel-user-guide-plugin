@@ -10,7 +10,8 @@ return new class extends Migration {
                 $table->id();
                 $table->foreignId('module_id')->constrained('user_guide_modules')->onDelete('cascade');
                 $table->string('name', 256);
-                $table->text('description')->nullable();
+                // $table->text('description')->nullable();
+                $table->longText('description')->nullable();
                 $table->json('files')->nullable();
                 $table->json('urls')->nullable();
                 $table->timestamps();

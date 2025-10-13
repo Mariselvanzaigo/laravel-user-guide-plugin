@@ -6,6 +6,7 @@ use Illuminate\Validation\Rule;
 
 class UserGuideRequest extends FormRequest
 {
+    public const MAX_DESC_CHARS = 20000;
     public function authorize() { return true; }
 
     public function rules() {
@@ -22,9 +23,22 @@ class UserGuideRequest extends FormRequest
                     ->ignore($userGuideId),
             ],
             'description' => 'nullable|string|max:2000',
-            'files.*' => 'nullable|file|max:20480|mimes:jpg,jpeg,png,pdf,doc,docx,mp4',
+            'files.*' => 'nullable|file|max:20480|mimetypes:application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,image/jpeg,image/png,video/mp4',
             'urls.*' => 'nullable|url'
         ];
+    }
+    public function withValidator($validator)
+    {
+        $validator->after(function ($validator) {
+        $desc = $this->input('description', '');
+        // Remove HTML tags and decode entities to count real characters
+        $plain = trim(strip_tags(html_entity_decode($desc)));
+
+
+        if ($plain !== '' && mb_strlen($plain) > self::MAX_DESC_CHARS) {
+        $validator->errors()->add('description', "Description must be at most " . self::MAX_DESC_CHARS . " characters (plain-text). Please shorten the content.");
+        }
+        });
     }
     public function wantsJson(): bool
     {

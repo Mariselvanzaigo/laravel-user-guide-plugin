@@ -1,7 +1,41 @@
 // userguide.js
 (function () {
+let descriptionEditor;
   document.addEventListener('DOMContentLoaded', () => {
-    
+    ClassicEditor
+      .create(document.querySelector('#description'), {
+          toolbar: [
+              'heading', '|', 'bold', 'italic', 'link',
+              'bulletedList', 'numberedList', 'blockQuote',
+              'insertTable', 'imageUpload'
+          ],
+          ckfinder: {
+              uploadUrl: window.ckEditorUploadUrl
+          }
+      })
+      .then(editor => {
+          descriptionEditor = editor;
+
+          editor.editing.view.change(writer => {
+              writer.setStyle('min-height', '300px', editor.editing.view.document.getRoot());
+          });
+
+          editor.model.document.on('change:data', () => {
+              const ta = document.querySelector('#description');
+              ta.classList.remove('is-invalid');
+              const errDiv = document.querySelector('#description_error');
+              if (errDiv) errDiv.textContent = '';
+          });
+      })
+      .catch(error => console.error(error));
+
+    // Initialize Select2
+    $('#module_id').select2({
+        placeholder: "Select Module",
+        width: '100%'
+    }).on('change', function() {
+      validateField(this);
+    });
     const form = document.querySelector('#userGuideCreateForm') || document.querySelector('#userGuideEditForm');
     if (!form) return;
 
@@ -88,58 +122,73 @@
 
     // ---------- Validate field ----------
     function validateField(input) {
-      // Only target the invalid-feedback in the same row
-      let errorEl = input.closest('.url-row')?.querySelector('.invalid-feedback') || input.closest('.mb-3')?.querySelector('.invalid-feedback');
-      if (!errorEl) return true;
+    let errorEl = input.closest('.url-row')?.querySelector('.invalid-feedback') 
+                  || input.closest('.mb-3')?.querySelector('.invalid-feedback');
+    if (!errorEl) return true;
 
-      errorEl.style.display = 'none';
-      errorEl.textContent = '';
-      input.classList.remove('is-invalid');
+    errorEl.style.display = 'none';
+    errorEl.textContent = '';
+    input.classList.remove('is-invalid');
 
-      // Required check
-      if (input.required && !String(input.value || '').trim()) {
+    // Select2 container fix
+    if ($(input).hasClass('select2-hidden-accessible')) {
+        $(input).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
+    }
+
+    // Required check
+    if (input.required && !String(input.value || '').trim()) {
         errorEl.textContent = 'This field is required.';
         errorEl.style.display = 'block';
         input.classList.add('is-invalid');
-        return false;
-      }
 
-      // Name max length
-      if (input.id === 'name' && input.value.length > 256) {
+        // Add invalid class to Select2 container if applicable
+        if ($(input).hasClass('select2-hidden-accessible')) {
+            $(input).next('.select2-container').find('.select2-selection').addClass('is-invalid');
+        }
+
+        return false;
+    }
+
+    // Name max length
+    if (input.id === 'name' && input.value.length > 256) {
         errorEl.textContent = 'Maximum 256 characters allowed.';
         errorEl.style.display = 'block';
         input.classList.add('is-invalid');
         return false;
-      }
+    }
 
-      // Description max length
-      if (input.id === 'description' && input.value.length > 2000) {
+    // Description max length
+    if (input.id === 'description' && input.value.length > 2000) {
         errorEl.textContent = 'Maximum 2000 characters allowed.';
         errorEl.style.display = 'block';
         input.classList.add('is-invalid');
         return false;
-      }
-
-      // URL strict regex
-      if (input.name === 'urls[]' && input.value.trim()) {
-        const urlRegex = /^(https?:\/\/)([\w-]+\.)+[\w-]{2,}([\/\w .-]*)*\/?$/;
-        if (!urlRegex.test(input.value.trim())) {
-          errorEl.textContent = 'Enter valid URL';
-          errorEl.style.display = 'block';
-          input.classList.add('is-invalid');
-          return false;
-        }
-      }
-
-      return true;
     }
+
+    // URL strict regex
+    if (input.name === 'urls[]' && input.value.trim()) {
+        const urlRegex = /^(https?:\/\/)([\w-]+\.)+[\w-]{2,}([\/\w .-]*)*\/?$/;
+        // const urlRegex = /^(https?:\/\/)?(www\.)?([\w-]+\.)+[\w-]{2,}([/?#][\w\-.,@?^=%&:\/~+#]*)?$/i;
+        if (!urlRegex.test(input.value.trim())) {
+            errorEl.textContent = 'Enter valid URL';
+            errorEl.style.display = 'block';
+            input.classList.add('is-invalid');
+            return false;
+        }
+    }
+
+    return true;
+}
+
 
     // attach validation to all inputs
     form.querySelectorAll('input, select, textarea').forEach(input => {
       input.addEventListener('input', () => validateField(input));
       input.addEventListener('change', () => validateField(input));
     });
-
+    $('.select2').on('change', function () {alert(1);
+         // 'this' is the original <select> element
+    });
     // ---------- File input change ----------
     if (fileInput) {
       fileInput.addEventListener('change', (e) => {
