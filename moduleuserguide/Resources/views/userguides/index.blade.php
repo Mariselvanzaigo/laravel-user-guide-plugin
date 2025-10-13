@@ -22,6 +22,8 @@ $prefix = request()->segment(1) ?? 'default';
 <div class="container container_plugin_module m-4">
     <h2>User Guides</h2>
 
+    <a href="{{ route($prefix . '.module-user-guide.user_guide_modules.create') }}" 
+       class="btn btn-primary mb-3">Add Module</a>
     <a href="{{ route($prefix . '.module-user-guide.user-guides.create') }}" class="btn btn-primary mb-3">Add User Guide</a>
     <a href="{{ route($prefix . '.module-user-guide.user-guides.show') }}" class="btn btn-primary mb-3">View User Guide</a>
 
