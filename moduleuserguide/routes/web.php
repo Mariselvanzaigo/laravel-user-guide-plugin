@@ -4,6 +4,7 @@ use ModuleUserGuide\Http\Controllers\UserGuideController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Response;
+Route::middleware(['web', 'auth'])->group(function () {
 $prefix = request()->segment(1) ?? 'default'; 
 Route::prefix($prefix . '/module-user-guide')
     ->name($prefix . '.module-user-guide.') // dynamic route names
@@ -21,7 +22,7 @@ Route::prefix($prefix . '/module-user-guide')
         Route::post('user-guides/upload-image', [UserGuideController::class, 'uploadImage'])
             ->name('user-guides.upload-image');
     });
-
+});
 
 
 Route::get('plugin-assets/{path}', function ($path) {

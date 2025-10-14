@@ -54,7 +54,9 @@ $prefix = request()->segment(1) ?? 'default';
 <div class="container mt-4 m-4">
     <div class="row">
         <!-- Back Button -->
-        <div><a href="{{ route($prefix . '.module-user-guide.user-guides.index') }}" class="btn btn-secondary m-2"><i class="fas fa-arrow-left me-1"></i></a></div>
+        @if ($userRoleId == 1)
+            <div><a href="{{ route($prefix . '.module-user-guide.user-guides.index') }}" class="btn btn-secondary m-2"><i class="fas fa-arrow-left me-1"></i></a></div>
+        @endif
         <h1 class="mb-4">User Guides</h1>
     </div>
     <!-- Module Selection -->
