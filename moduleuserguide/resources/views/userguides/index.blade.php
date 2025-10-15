@@ -112,9 +112,7 @@ $prefix = request()->segment(1) ?? 'default';
     </table>
 
     {{-- Pagination --}}
-    <div class="d-flex justify-content-center">
         {{ $userGuides->appends(['search' => $searchQuery, 'module_id' => $selectedModuleId])->links() }}
-    </div>
 </div>
 
 <script>
