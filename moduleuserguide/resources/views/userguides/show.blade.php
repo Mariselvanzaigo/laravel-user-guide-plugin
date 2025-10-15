@@ -45,6 +45,9 @@ $prefix = request()->segment(1) ?? 'default';
     .user-guide-description ul, .user-guide-description ol {
         padding-left: 20px;
     }
+    .user-guide-description img{
+        width:100%;
+    }
 </style>
 <!-- Font Awesome -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">

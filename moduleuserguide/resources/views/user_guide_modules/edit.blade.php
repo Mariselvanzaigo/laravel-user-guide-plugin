@@ -39,10 +39,11 @@ $prefix = request()->segment(1) ?? 'default';
         @method('PUT')
 
         <div class="form-group mb-3">
-            <label for="name">Module Name</label>
+            <label for="name">Module Name<span class="text-danger">*</span></label>
             <input type="text" name="name" id="name" class="form-control" 
                    value="{{ old('name', $module->name) }}" 
-                   required maxlength="256">
+                 maxlength="256">
+            <span id="name-error" class="text-danger"></span>
             @error('name') <span class="text-danger">{{ $message }}</span> @enderror
         </div>
 

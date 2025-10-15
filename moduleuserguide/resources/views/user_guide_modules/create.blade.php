@@ -39,7 +39,7 @@ $prefix = request()->segment(1) ?? 'default';
         @csrf
 
         <div class="form-group mb-3">
-            <label for="name">Module Name</label>
+            <label for="name">Module Name<span class="text-danger">*</span></label>
             <input type="text" name="name" id="name" class="form-control" 
                    value="{{ old('name') }}" maxlength="256">
             <span id="name-error" class="text-danger"></span>
