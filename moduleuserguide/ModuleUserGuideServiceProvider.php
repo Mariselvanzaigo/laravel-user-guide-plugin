@@ -1,4 +1,5 @@
 <?php
+
 namespace ModuleUserGuide;
 
 use Illuminate\Support\Facades\Gate;
@@ -14,36 +15,33 @@ class ModuleUserGuideServiceProvider extends ServiceProvider
 {
     public function boot()
     {
-        // Load web routes
-        Route::middleware('web')->group(__DIR__.'/routes/web.php');
+        // Load routes
+        Route::middleware('web')->group(__DIR__ . '/routes/web.php');
 
-        // Load views
-        $this->loadViewsFrom(__DIR__.'/resources/views', 'moduleuserguide');
+        // Load views (now lowercase)
+        $this->loadViewsFrom(__DIR__ . '/resources/views', 'moduleuserguide');
 
-        // Load migrations
-        $this->loadMigrationsFrom(__DIR__.'/database/migrations');
+        // Load migrations (now lowercase)
+        $this->loadMigrationsFrom(__DIR__ . '/database/migrations');
 
-        // Publish views to allow customization
+        // Publish views
         $this->publishes([
-            __DIR__.'/resources/views' => resource_path('views/vendor/moduleuserguide'),
+            __DIR__ . '/resources/views' => resource_path('views/vendor/moduleuserguide'),
         ], 'views');
 
-        // Publish assets (JS/CSS)
+        // Publish assets
         $this->publishes([
-            __DIR__.'/Resources/assets' => public_path('vendor/moduleuserguide'),
+            __DIR__ . '/resources/assets' => public_path('vendor/moduleuserguide'),
         ], 'public');
 
         // Register policies
         Gate::policy(Module::class, ModulePolicy::class);
 
-        // ----------------------
-        // Pass user role only to plugin views
-        // ----------------------
+        // Pass user role to plugin views only
         $this->app->booted(function () {
             View::composer('moduleuserguide::*', function ($view) {
                 $userRoleId = null;
 
-                // Safely get authenticated user
                 if (Auth::check()) {
                     $user = Auth::user();
                     $userRoleId = DB::table('role_user')
@@ -51,12 +49,10 @@ class ModuleUserGuideServiceProvider extends ServiceProvider
                         ->value('role_id');
                 }
 
-                // Pass only to plugin views
                 $view->with('userRoleId', $userRoleId);
             });
         });
     }
-
 
     public function register()
     {
