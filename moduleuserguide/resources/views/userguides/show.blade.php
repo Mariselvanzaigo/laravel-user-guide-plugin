@@ -57,13 +57,17 @@ $prefix = request()->segment(1) ?? 'default';
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
     }
+    .container_plugin_module {
+        height: auto;
+        min-height: 700px;
+    }
 </style>
 <!-- Font Awesome -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
 <!-- Select2 CSS for searchable dropdown -->
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
-<div class="container mt-4 m-4">
+<div class="container mt-4 m-4 container_plugin_module">
     <div class="row">
         <!-- Back Button -->
         @if ($userRoleId == 1)
