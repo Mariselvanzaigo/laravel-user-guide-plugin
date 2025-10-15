@@ -46,7 +46,8 @@ $prefix = request()->segment(1) ?? 'default';
         padding-left: 20px;
     }
     .user-guide-description img{
-        width:100%;
+        width: auto;
+        max-width: 100%;
     }
 </style>
 <!-- Font Awesome -->
