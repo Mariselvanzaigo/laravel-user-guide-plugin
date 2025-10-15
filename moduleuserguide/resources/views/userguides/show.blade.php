@@ -49,6 +49,14 @@ $prefix = request()->segment(1) ?? 'default';
         width: auto;
         max-width: 100%;
     }
+    .preview_file_name{
+        height: 35px;
+        line-height: 1.2;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+    }
 </style>
 <!-- Font Awesome -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
@@ -120,7 +128,7 @@ $prefix = request()->segment(1) ?? 'default';
                                     @endphp
                                     <div class="col-md-4 mb-2">
                                         <div class="card border p-2 h-100">
-                                            <p class="mb-1"><strong>{{ $filename }}</strong></p>
+                                            <p class="mb-1 preview_file_name"><strong>{{ $filename }}</strong></p>
                                             <small>Type: {{ $ext }}</small>
                                             @if($isImage)
                                                 <img src="{{ $url }}" class="img-fluid rounded mt-1" style="max-height:120px;">
