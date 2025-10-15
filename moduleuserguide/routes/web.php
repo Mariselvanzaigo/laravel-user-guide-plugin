@@ -25,7 +25,7 @@ Route::prefix($prefix . '/module-user-guide')
 });
 
 
-Route::get('plugin-assets/{path}', function ($path) {
+Route::get('moduleuserguide/{path}', function ($path) {
     $file = base_path('vendor/moduleuserguide/laravel-user-guide-plugin/moduleuserguide/Resources/assets/' . $path);
 
     if (!File::exists($file)) {
