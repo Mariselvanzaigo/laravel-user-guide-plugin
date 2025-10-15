@@ -23,7 +23,7 @@ class UserGuideRequest extends FormRequest
                     ->ignore($userGuideId),
             ],
             'description' => 'nullable|string|max:2000',
-            'files.*' => 'nullable|file|max:20480|mimetypes:application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,image/jpeg,image/png,video/mp4',
+            'files.*' => 'nullable|file|max:20480|mimetypes:application/pdf,image/jpeg,image/png,video/mp4',
             'urls.*' => 'nullable|url'
         ];
     }
@@ -52,7 +52,7 @@ class UserGuideRequest extends FormRequest
             'name.max' => 'Maximum 256 characters allowed.',
             'name.unique' => 'This name already exists for the selected module.',
             'description.max' => 'Maximum 2000 characters allowed.',
-            'files.*.mimes' => 'Allowed file types: jpg, jpeg, png, pdf, doc, docx, mp4.',
+            'files.*.mimes' => 'Allowed file types: jpg, jpeg, png, pdf, mp4.',
             'files.*.max' => 'Each file must not exceed 20MB.',
             'urls.*.url' => 'Enter a valid URL (https://...)'
         ];

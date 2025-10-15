@@ -134,7 +134,7 @@ $prefix = request()->segment(1) ?? 'default';
                                             @endif
                                             <div class="mt-2 d-flex">
                                                 <a href="{{ $url }}" target="_blank" class="btn btn-sm btn-primary mr-2">Open</a>
-                                                <button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#fileModal{{ $index }}_{{ $fIndex }}">Preview</button>
+                                                {{-- <button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#fileModal{{ $index }}_{{ $fIndex }}">Preview</button> --}}
                                             </div>
                                         </div>
 

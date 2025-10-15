@@ -176,7 +176,8 @@ $prefix = request()->segment(1) ?? 'default';
       {{-- Files --}}
       <div class="mb-3">
           <label for="fileInput" class="form-label fw-semibold">Upload Files (max 20MB each)</label>
-          <input type="file" id="fileInput" class="form-control" accept=".jpg,.jpeg,.png,.pdf,.doc,.docx,.mp4" multiple>
+          {{-- <input type="file" id="fileInput" class="form-control" accept=".jpg,.jpeg,.png,.pdf,.doc,.docx,.mp4" multiple> --}}
+          <input type="file" id="fileInput" class="form-control" accept=".jpg,.jpeg,.png,.pdf,.mp4" multiple>
           <div id="file-list" class="mt-2"></div>
           <div class="invalid-feedback d-block" id="files_error"></div>
       </div>

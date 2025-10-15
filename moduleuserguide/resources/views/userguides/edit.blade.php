@@ -191,7 +191,8 @@ $prefix = request()->segment(1) ?? 'default';
               @endif
           </div>
 
-          <input type="file" name="files[]" id="fileInput" class="form-control" accept=".jpg,.jpeg,.png,.pdf,.doc,.docx,.mp4" multiple>
+          {{-- <input type="file" name="files[]" id="fileInput" class="form-control" accept=".jpg,.jpeg,.png,.pdf,.doc,.docx,.mp4" multiple> --}}
+          <input type="file" name="files[]" id="fileInput" class="form-control" accept=".jpg,.jpeg,.png,.pdf,.mp4" multiple>
           <div id="file-list" class="mt-2 row g-2"></div>
           <div class="invalid-feedback d-block" id="files_error"></div>
       </div>
