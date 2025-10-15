@@ -207,6 +207,6 @@ $prefix = request()->segment(1) ?? 'default';
   // Dynamic CKEditor upload URL
   window.ckEditorUploadUrl = "{{ route($prefix . '.module-user-guide.user-guides.upload-image') }}?_token={{ csrf_token() }}";
 </script>
-<link href="{{ url('moduleuserguide/css/toastr.min.css') }}" rel="stylesheet">
-<script src="{{ url('moduleuserguide/js/toastr.min.js') }}"></script>
-<script src="{{ url('moduleuserguide/js/userguide.js') }}"></script>
+<link href="{{ asset('vendor/moduleuserguide/css/toastr.min.css') }}" rel="stylesheet">
+<script src="{{ asset('vendor/moduleuserguide/js/toastr.min.js') }}"></script>
+<script src="{{ asset('vendor/moduleuserguide/js/userguide.js') }}"></script>

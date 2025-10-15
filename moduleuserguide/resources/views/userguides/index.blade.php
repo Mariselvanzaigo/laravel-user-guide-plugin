@@ -67,11 +67,10 @@ $prefix = request()->segment(1) ?? 'default';
     </div>
 </div>
 @endsection
-
-<link href="{{ url('moduleuserguide/css/toastr.min.css') }}" rel="stylesheet">
-<link href="{{ url('moduleuserguide/css/userguide.css') }}" rel="stylesheet">
-<script src="{{ url('moduleuserguide/js/toastr.min.js') }}"></script>
-<script src="{{ url('moduleuserguide/js/userguide.js') }}"></script>
+<link href="{{ asset('vendor/moduleuserguide/css/toastr.min.css') }}" rel="stylesheet">
+<link href="{{ asset('vendor/moduleuserguide/css/userguide.css') }}" rel="stylesheet">
+<script src="{{ asset('vendor/moduleuserguide/js/toastr.min.js') }}"></script>
+<script src="{{ asset('vendor/moduleuserguide/js/userguide.js') }}"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     const msg = sessionStorage.getItem('userGuideSuccess');
