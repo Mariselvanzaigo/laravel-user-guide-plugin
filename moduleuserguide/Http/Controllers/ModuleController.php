@@ -17,16 +17,30 @@ class ModuleController extends Controller
         return route($prefix . '.module-user-guide.' . $name, $params);
     }
 
-    public function index()
+    // public function index()
+    // {
+    //     // $this->authorize('index', Module::class);
+    //     $modules = Module::paginate(6);
+    //     return view('moduleuserguide::user_guide_modules.index', [
+    //         'modules' => $modules,
+    //         'layout' => $this->layout
+    //     ]);
+    // }
+    public function index(Request $request)
     {
-        // $this->authorize('index', Module::class);
-        $modules = Module::paginate(6);
+        $query = Module::query();
+
+        if ($search = $request->get('search')) {
+            $query->where('name', 'like', '%' . $search . '%');
+        }
+
+        $modules = $query->paginate(6);
+
         return view('moduleuserguide::user_guide_modules.index', [
             'modules' => $modules,
             'layout' => $this->layout
         ]);
     }
-
     public function create()
     {
         // $this->authorize('create', Module::class);

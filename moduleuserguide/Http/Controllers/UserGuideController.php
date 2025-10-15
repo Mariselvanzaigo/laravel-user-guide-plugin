@@ -19,13 +19,40 @@ class UserGuideController extends Controller
         return route($prefix . '.module-user-guide.' . $name, $params);
     }
 
-    public function index()
+    // public function index()
+    // {
+    //     $query = UserGuide::with('module')->orderByDesc('id');
+    //     $userGuides = $query->paginate(10);
+
+    //     return view('moduleuserguide::userguides.index', [
+    //         'userGuides' => $userGuides,
+    //         'layout' => $this->layout
+    //     ]);
+    // }
+    public function index(Request $request)
     {
         $query = UserGuide::with('module')->orderByDesc('id');
-        $userGuides = $query->paginate(10);
+
+        // Filter by search keyword
+        if ($search = $request->get('search')) {
+            $query->where('name', 'like', '%' . $search . '%');
+        }
+
+        // Filter by module
+        if ($moduleId = $request->get('module_id')) {
+            $query->where('module_id', $moduleId);
+        }
+
+        $userGuides = $query->paginate(6)->withQueryString();
+
+        // Get all modules for dropdown
+        $modules = Module::orderBy('name')->get();
 
         return view('moduleuserguide::userguides.index', [
             'userGuides' => $userGuides,
+            'modules' => $modules,
+            'searchQuery' => $search ?? '',
+            'selectedModuleId' => $moduleId ?? '',
             'layout' => $this->layout
         ]);
     }
