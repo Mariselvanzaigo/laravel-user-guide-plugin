@@ -203,6 +203,22 @@ $prefix = request()->segment(1) ?? 'default';
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <!-- Select2 JS -->
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+<script>
+  
+var jqPlugin = jQuery.noConflict(true);
+  jqPlugin(document).ready(function () {alert(1);
+      // Initialize Select2 safely within plugin context
+      jqPlugin('#module_id').select2({
+          placeholder: "Select Module",
+          width: '200px'
+      }).on('change', function() {
+        //  if (window.UserGuidePlugin && typeof UserGuidePlugin.validateField === 'function') {
+            validateField(this);
+        // }
+      });
+    });
+</script>
 <script src="https://cdn.ckeditor.com/ckeditor5/39.0.0/classic/ckeditor.js"></script>
 <script>
   // Dynamic CKEditor upload URL

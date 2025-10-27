@@ -223,15 +223,16 @@ $prefix = request()->segment(1) ?? 'default';
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-    // Initialize Select2
-    $('#moduleSelect').select2({
-        placeholder: "Select Module",
-        width: '200px'
-    }).on('change', function() {
-        $('#filterForm').submit();
-    });
+var jqPlugin = jQuery.noConflict(true);
 
+  jqPlugin(document).ready(function () {
+      // Initialize Select2 safely within plugin context
+      jqPlugin('#moduleSelect').select2({
+          placeholder: "Select Module",
+          width: '200px'
+      }).on('change', function() {
+          jqPlugin('#filterForm').submit();
+      });
     // Accordion
     const headers = document.querySelectorAll('.accordion-header');
     headers.forEach((header, index) => {

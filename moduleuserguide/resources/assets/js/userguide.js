@@ -30,12 +30,12 @@ let descriptionEditor;
       .catch(error => console.error(error));
 
     // Initialize Select2
-    $('#module_id').select2({
-        placeholder: "Select Module",
-        width: '100%'
-    }).on('change', function() {
-      validateField(this);
-    });
+    // $('#module_id').select2({
+    //     placeholder: "Select Module",
+    //     width: '100%'
+    // }).on('change', function() {
+    //   validateField(this);
+    // });
     const form = document.querySelector('#userGuideCreateForm') || document.querySelector('#userGuideEditForm');
     if (!form) return;
 
@@ -121,7 +121,8 @@ let descriptionEditor;
     }
 
     // ---------- Validate field ----------
-    function validateField(input) {
+    // function validateField(input) {
+    window.validateField = function (input) {
     let errorEl = input.closest('.url-row')?.querySelector('.invalid-feedback') 
                   || input.closest('.mb-3')?.querySelector('.invalid-feedback');
     if (!errorEl) return true;
