@@ -15,8 +15,8 @@ Route::prefix($prefix . '/module-user-guide')
         Route::resource('user-guides', UserGuideController::class);
 
         // Optional custom show
-        Route::get('user-guides/show', [UserGuideController::class, 'show'])
-            ->name('user-guides.show');
+        // Route::get('user-guides/show', [UserGuideController::class, 'show'])
+        //     ->name('user-guides.show');
 
         // CKEditor image upload
         Route::post('user-guides/upload-image', [UserGuideController::class, 'uploadImage'])
