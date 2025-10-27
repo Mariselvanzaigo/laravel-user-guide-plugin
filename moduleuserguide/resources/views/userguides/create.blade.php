@@ -207,7 +207,7 @@ $prefix = request()->segment(1) ?? 'default';
 <script>
   
 var jqPlugin = jQuery.noConflict(true);
-  jqPlugin(document).ready(function () {alert(1);
+  jqPlugin(document).ready(function () {
       // Initialize Select2 safely within plugin context
       jqPlugin('#module_id').select2({
           placeholder: "Select Module",
