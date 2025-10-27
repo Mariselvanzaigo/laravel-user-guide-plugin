@@ -187,7 +187,7 @@ let descriptionEditor;
       input.addEventListener('input', () => validateField(input));
       input.addEventListener('change', () => validateField(input));
     });
-    $('.select2').on('change', function () {alert(1);
+    $('.select2').on('change', function () {
          // 'this' is the original <select> element
     });
     // ---------- File input change ----------
