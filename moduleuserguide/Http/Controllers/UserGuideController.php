@@ -71,7 +71,7 @@ class UserGuideController extends Controller
         $selectedModuleId = $request->get('module_id') ?? $modules->first()->id;
 
         if (!$request->has('module_id')) {
-            return redirect()->to($this->prefixedRoute('user-guides.show', ['module_id' => $selectedModuleId]));
+            return redirect()->to($this->prefixedRoute('user-guides.display', ['module_id' => $selectedModuleId]));
         }
 
         $selectedModule = $modules->firstWhere('id', $selectedModuleId) ?? $modules->first();

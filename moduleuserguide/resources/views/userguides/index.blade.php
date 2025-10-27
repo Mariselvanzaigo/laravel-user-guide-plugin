@@ -69,7 +69,7 @@ $prefix = request()->segment(1) ?? 'default';
         <div>
             <a href="{{ route($prefix . '.module-user-guide.user_guide_modules.create') }}" class="btn btn-primary">Add Module</a>
             <a href="{{ route($prefix . '.module-user-guide.user-guides.create') }}" class="btn btn-primary">Add User Guide</a>
-            <a href="{{ route($prefix . '.module-user-guide.user-guides.show') }}" class="btn btn-primary">View User Guide</a>
+            <a href="{{ route($prefix . '.module-user-guide.user-guides.display') }}" class="btn btn-primary">View User Guide</a>
         </div>
     </div>
 
