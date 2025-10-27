@@ -76,7 +76,7 @@ $prefix = request()->segment(1) ?? 'default';
         <h1 class="mb-4">User Guides</h1>
     </div>
     <!-- Module Selection -->
-    <form id="filterForm" method="GET" action="{{ route($prefix . '.module-user-guide.user-guides.show') }}" class="mb-4">
+    <form id="filterForm" method="GET" action="{{ route($prefix . '.module-user-guide.user-guides.display') }}" class="mb-4">
         <label for="moduleSelect">Select Module:</label>
         <select name="module_id" id="moduleSelect" class="form-select w-auto d-inline-block">
             @foreach($modules as $module)
